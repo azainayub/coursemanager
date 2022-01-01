@@ -142,6 +142,23 @@ def new_course(request):
     })
 
 @login_required(login_url="login")
+def course_delete(request, id):
+    # Retreive course from database
+    course = Course.objects.get(id=id)
+
+    # Allow only the course creator to delete
+    if request.user == course.user:
+        
+        # Delete the course
+        course.delete()
+
+        return HttpResponseRedirect(reverse("index"))
+
+    # Deny access to unauthorized users
+    else:
+        return HttpResponseForbidden()
+
+@login_required(login_url="login")
 def new_reminder(request):
     form = NewReminderForm()
 

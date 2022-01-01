@@ -15,7 +15,7 @@
         <a href="{% url 'course_new' %}"><button>Add Course</button></a>
         <ul>
         {% for course in courses %}
-            <li><a href="{% url 'course' course.id %}">{{ course.title }}</a></li>
+            <li><a href="{% url 'course' course.id %}">{{ course.title }}</a><a href="{% url 'course_delete' course.id %}"><button>Delete</button></a></li>
         {% endfor %}
         </ul>
     </section>
