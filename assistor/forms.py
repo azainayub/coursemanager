@@ -1,4 +1,3 @@
-from typing_extensions import ParamSpec
 from django import forms
 from django.forms import widgets
 from .models import Course, File, Note, Reminder
@@ -22,6 +21,9 @@ class NewNoteForm(forms.ModelForm):
             "title": "Title",
             "content": "Content"
         }
+        widgets = {
+            "content": forms.Textarea()
+        }
 
 class NewFileForm(forms.ModelForm):
     class Meta:
@@ -39,4 +41,7 @@ class NewReminderForm(forms.ModelForm):
         labels = {
             "name": "Name",
             "time": "Time"
+        }
+        widgets = {
+            "time": forms.DateTimeInput(attrs={"type": "datetime-local"})
         }
