@@ -8,7 +8,7 @@
     <section id="notes">
         <ul>
         {% for note in notes %}
-            <li><a href="{% url 'note' course.id note.id %}">{{ note.title }}</a></li>
+            <li><a href="{% url 'note' course.id note.id %}">{{ note.title }}</a><a href="{% url 'note_delete' course.id note.id %}"><button>Delete</button></a></li>
         {% endfor %} 
         </ul>
     </section>
@@ -18,7 +18,7 @@
     <section id="files">
         <ul>
         {% for file in files %}
-            <li><a download href="{{ file.file.url }}">{{ file.name }}</a></li>
+            <li><a download href="{{ file.file.url }}">{{ file.name }}</a><a href="{% url 'file_delete' course.id file.id %}"><button>Delete</button></a></li>
         {% endfor %} 
         </ul>
     </section>

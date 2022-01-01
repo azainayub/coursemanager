@@ -234,6 +234,27 @@ def new_note(request, course_id):
     except Course.DoesNotExist:
         return HttpResponseNotFound()
 
+@login_required(login_url="login")
+def note_delete(request, course_id, note_id):
+    try:
+        # Retreive note from database
+        note = Note.objects.get(id=note_id)
+
+        # Allow only the note creator to delete
+        if request.user == note.course.user:
+            
+            # Delete the note
+            note.delete()
+
+            return HttpResponseRedirect(reverse("course", args=[course_id]))
+            
+        # Deny access to unauthorized user
+        else:
+            return HttpResponseForbidden()
+
+    # Note doesn't exist in the database
+    except Note.DoesNotExist:
+        return HttpResponseNotFound()
 
 @login_required(login_url="login")
 def new_file(request, course_id):
@@ -263,4 +284,27 @@ def new_file(request, course_id):
 
     # Course doesn't exist in database
     except Course.DoesNotExist:
+        return HttpResponseNotFound()
+
+@login_required(login_url="login")
+def file_delete(request, course_id, file_id):
+    try:
+        # Retreive file from the database
+        file = File.objects.get(id=file_id)
+
+        # Allow only the file owner to delete
+        if request.user == file.course.user:
+            
+            # Delete the file
+            file.delete()
+
+            return HttpResponseRedirect(reverse("course", args=[course_id]))
+
+        # Deny access to unauthorized users
+        else:
+            return HttpResponseForbidden()
+
+
+    # File doesn't exist in the database
+    except File.DoesNotExist:
         return HttpResponseNotFound()
