@@ -6,7 +6,7 @@
         <a href="{% url 'reminder_new' %}"><button>Add Reminder</button></a>
         <ul>
         {% for reminder in reminders %}
-            <li>{{ reminder.name }} on {{ reminder.time }}</li>
+            <li>{{ reminder.name }} on {{ reminder.time }}<a href="{% url 'reminder_delete' reminder.id %}"><button>Delete</button></a></li>
         {% endfor %}
         </ul>
     </section>

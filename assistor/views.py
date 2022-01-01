@@ -163,6 +163,23 @@ def new_reminder(request):
     })
 
 @login_required(login_url="login")
+def reminder_delete(request, id):
+    # Retreive reminder from database
+    reminder = Reminder.objects.get(id=id)
+
+    # Allow only the reminder creator to delete
+    if request.user == reminder.user:
+        
+        # Delete the reminder
+        reminder.delete()
+
+        return HttpResponseRedirect(reverse("index"))
+
+    # Deny unauthorized users
+    else:
+        return HttpResponseForbidden()
+
+@login_required(login_url="login")
 def new_note(request, course_id):
     form = NewNoteForm()
     try:
