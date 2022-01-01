@@ -1,0 +1,25 @@
+{% extends 'assistor/layout.html' %}
+
+{% block body %}
+    <h1>{{ course.title }}</h1>
+
+    <h2>Notes</h2>
+    <a href="{% url 'note_new' course.id %}"><button>New Note</button></a>
+    <section id="notes">
+        <ul>
+        {% for note in notes %}
+            <li><a href="{% url 'note' course.id note.id %}">{{ note.title }}</a></li>
+        {% endfor %} 
+        </ul>
+    </section>
+
+    <h2>Files</h2>
+    <a href="{% url 'file_new' course.id %}"><button>New File</button></a>
+    <section id="files">
+        <ul>
+        {% for file in files %}
+            <li><a download href="{{ file.file.url }}">{{ file.name }}</a></li>
+        {% endfor %} 
+        </ul>
+    </section>
+{% endblock %}

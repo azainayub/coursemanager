@@ -1,0 +1,14 @@
+{% extends 'assistor/layout.html' %}
+
+{% block title %}
+    Note
+{% endblock %}
+
+{% block body %}
+    <h1>Add Note:</h1>
+    <form action="{% url 'note_new' course.id %}" method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" name="add" value="Add">
+    </form>
+{% endblock %}

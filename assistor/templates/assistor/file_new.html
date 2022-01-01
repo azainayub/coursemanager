@@ -1,0 +1,14 @@
+{% extends 'assistor/layout.html' %}
+
+{% block title %}
+    File
+{% endblock %}
+
+{% block body %}
+    <h1>New File:</h1>
+    <form action="{% url 'file_new' course.id %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Add">
+    </form>
+{% endblock %}

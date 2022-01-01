@@ -1,4 +1,22 @@
 {% extends "assistor/layout.html" %}
 
 {% block body %}
+    <section id="reminders">
+        <h1>Reminders</h1>
+        <a href="{% url 'reminder_new' %}"><button>Add Reminder</button></a>
+        <ul>
+        {% for reminder in reminders %}
+            <li>{{ reminder.name }} on {{ reminder.time }}</li>
+        {% endfor %}
+        </ul>
+    </section>
+    <section id="courses">
+        <h1>Courses:</h1>
+        <a href="{% url 'course_new' %}"><button>Add Course</button></a>
+        <ul>
+        {% for course in courses %}
+            <li><a href="{% url 'course' course.id %}">{{ course.title }}</a></li>
+        {% endfor %}
+        </ul>
+    </section>
 {% endblock %}
