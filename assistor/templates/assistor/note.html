@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block body %}
-    <h1>{{ note.title }}</h1>
+    <h1><a href="{% url 'course' note.course.id %}">{{ note.course.title }}</a></h1>
+
+    <h2>{{ note.title }}</h2>
     <p>{{ note.content }}</p>
 {% endblock %}

@@ -2,7 +2,8 @@
 
 {% block body %}
     <h1>{{ course.title }}</h1>
-
+    <a href="{% url 'course_delete' course.id %}"><button>Delete</button></a>
+    
     <h2>Notes</h2>
     <a href="{% url 'note_new' course.id %}"><button>New Note</button></a>
     <section id="notes">

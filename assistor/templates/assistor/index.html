@@ -1,22 +1,49 @@
 {% extends "assistor/layout.html" %}
+{% load static %}
+
+{% block title %}
+Home
+{% endblock %}
 
 {% block body %}
-    <section id="reminders">
-        <h1>Reminders</h1>
-        <a href="{% url 'reminder_new' %}"><button>Add Reminder</button></a>
-        <ul>
-        {% for reminder in reminders %}
-            <li>{{ reminder.name }} on {{ reminder.time }}<a href="{% url 'reminder_delete' reminder.id %}"><button>Delete</button></a></li>
-        {% endfor %}
-        </ul>
-    </section>
-    <section id="courses">
-        <h1>Courses:</h1>
-        <a href="{% url 'course_new' %}"><button>Add Course</button></a>
-        <ul>
-        {% for course in courses %}
-            <li><a href="{% url 'course' course.id %}">{{ course.title }}</a><a href="{% url 'course_delete' course.id %}"><button>Delete</button></a></li>
-        {% endfor %}
-        </ul>
-    </section>
+    <div class="container">
+        <section id="reminders">
+            <div class="bar">
+                <div>
+                    <img src="{% static 'assistor/reminder.svg' %}">
+                    Reminders
+                </div>
+                <div><a href="{% url 'reminder_new' %}"><button>+</button></a></div>
+            </div>
+    
+            {% for reminder in reminders %}
+            <div class="reminder">
+                <div>{{ reminder.name }} on {{ reminder.time }}</div>
+                <div>
+                    <a href="{% url 'reminder_delete' reminder.id %}"><img src="{% static 'assistor/delete.svg' %}" alt="Delete Reminder"></a>
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+
+        <section id="courses">
+            <div class="bar">
+                <div>
+                    <img src="{% static 'assistor/course.svg' %}">
+                    Courses
+                </div>
+                <div>
+                    <a href="{% url 'course_new' %}"><button>+</button></a>
+                </div>
+            </div>
+
+            
+            {% for course in courses %}
+            <div class="course">
+                <div>{{ course.title }}</div>
+                <div><a href="{% url 'course' course.id %}" class="btn btn-primary">View</a></div>
+            </div>
+            {% endfor %}
+        </section>
+    </div>
 {% endblock %}
