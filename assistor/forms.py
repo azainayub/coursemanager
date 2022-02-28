@@ -1,6 +1,29 @@
 from django import forms
-from django.forms import widgets
-from .models import Course, File, Note, Reminder
+from django.forms import EmailInput, PasswordInput, TextInput
+from .models import Course, File, Note, Reminder, User
+
+class RegistrationForm(forms.ModelForm):
+    error_css_class = 'text-danger'
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "username", "email", "password"]
+        widgets = {
+            "first_name": TextInput(attrs={"class": "form-control form-control-sm"}),
+            "last_name": TextInput(attrs={"class": "form-control form-control-sm"}),
+            "username": TextInput(attrs={"class": "form-control form-control-sm"}),
+            "email": EmailInput(attrs={"class": "form-control form-control-sm"}),
+            "password": PasswordInput(attrs={"class": "form-control form-control-sm"})
+        }
+
+class LoginForm(forms.ModelForm):
+    class Meta:
+        error_css_class = 'text-danger'
+        model = User
+        fields = ["username", "password"]
+        widgets = {
+            "username": TextInput(attrs={"class": "form-control form-control-sm"}),
+            "password": PasswordInput(attrs={"class": "form-control form-control-sm"})
+        }
 
 class NewCourseForm(forms.ModelForm):
     class Meta:

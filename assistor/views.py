@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
 from .models import Course, Note, Reminder, User, File
-from .forms import NewCourseForm, NewFileForm, NewNoteForm, NewReminderForm
+from .forms import RegistrationForm, LoginForm, NewCourseForm, NewFileForm, NewNoteForm, NewReminderForm
 
 # Create your views here.
 @login_required(login_url="login")
@@ -31,11 +31,16 @@ def login_view(request):
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
+            form = LoginForm(request.POST)
+            form.add_error("username", "Invalid username and/or password.")
             return render(request, "assistor/login.html", {
-                "message": "Invalid username and/or password."
+                "form": form
             })
     else:
-        return render(request, "assistor/login.html")
+        form = LoginForm()
+        return render(request, "assistor/login.html", {
+            "form": form
+        })
 
 
 def logout_view(request):
@@ -45,6 +50,7 @@ def logout_view(request):
 
 def register(request):
     if request.method == "POST":
+        form = RegistrationForm(request.POST)
         first_name = request.POST["first_name"]
         last_name = request.POST["last_name"]
         username = request.POST["username"]
@@ -54,8 +60,9 @@ def register(request):
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
         if password != confirmation:
+            form.add_error("password", "Passwords must match.")
             return render(request, "assistor/register.html", {
-                "message": "Passwords must match."
+                "form": form
             })
 
         # Attempt to create new user
@@ -64,12 +71,16 @@ def register(request):
             user.save()
         except IntegrityError:
             return render(request, "assistor/register.html", {
-                "message": "Username already taken."
-            })
+                "message": "Username already taken.",
+                "form": form
+            }) 
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "assistor/register.html")
+        form = RegistrationForm()
+        return render(request, "assistor/register.html", {
+            'form': form
+        })
 
 @login_required(login_url="login")
 def course(request, id):

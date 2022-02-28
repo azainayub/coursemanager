@@ -1,24 +1,33 @@
 {% extends "assistor/layout.html" %}
 
-{% block body %}
+{% block title %}Login{% endblock %}
 
-    <h2>Login</h2>
+{% block main %}
 
-    {% if message %}
-        <div>{{ message }}</div>
-    {% endif %}
-
-    <form action="{% url 'login' %}" method="post">
+    <form class="row g-3 p-4 mx-auto shadow rounded" action="{% url 'login' %}" method="post">
+        <h2>
+            <span class="material-icons-outlined fs-2">
+                login
+            </span>
+            Login
+        </h2>
         {% csrf_token %}
-        <div class="form-group">
-            <input autofocus class="form-control" type="text" name="username" placeholder="Username">
+        <div class="col-md-6">
+            {{ form.errors }}
         </div>
-        <div class="form-group">
-            <input class="form-control" type="password" name="password" placeholder="Password">
+        <div class="col-md-12">
+            {{ form.username.errors }}
+            <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label }}:</label>
+            {{ form.username }}
         </div>
-        <input class="btn btn-primary" type="submit" value="Login">
+        <div class="col-md-12">
+            {{ form.password.errors }}
+            <label for="{{ form.password.id_for_label }}" class="form-label">{{ form.password.label }}:</label>
+            {{ form.password }}
+        </div>
+        <div class="col-md-2 mx-auto">
+            <input class="btn btn-primary" type="submit" value="Login">
+        </div>
     </form>
-
-    Don't have an account? <a href="{% url 'register' %}">Register here.</a>
 
 {% endblock %}
