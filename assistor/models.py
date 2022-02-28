@@ -13,6 +13,18 @@ class Course(models.Model):
     # Title of the course
     title = models.CharField(max_length=64 , null=False, blank=False)
 
+    # Start date of the course
+    start_date = models.DateField(null=True, blank=True)
+
+    # Completion date of the course
+    completion_date = models.DateField(null=True, blank=True)
+
+    # Grade of the course
+    grade = models.CharField(max_length=8 , null=True, blank=True)
+
+    # Course provider
+    provider = models.CharField(max_length=256 , null=True, blank=True)
+
     # Time of creation
     creation_time = models.DateTimeField(auto_now=True, null=False, blank=True)
 
