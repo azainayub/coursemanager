@@ -3,10 +3,12 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>{% block title %}Course Helper{% endblock %}</title>
+        <title>{% block title %}Course Manager{% endblock %}</title>
         <link href="{% static 'assistor/main.min.css' %}" rel="stylesheet">
         <link href="{% static 'assistor/styles.css' %}" rel="stylesheet">
-        <script src="{% static 'assistor/scripts.js' %}"></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -36,9 +38,9 @@
               </div>
             </div>
           </nav>
-        <div class="body">
-            {% block body %}
+        <main class="bg-white m-5">
+            {% block main %}
             {% endblock %}
-        </div>
+        </main>
     </body>
 </html>
