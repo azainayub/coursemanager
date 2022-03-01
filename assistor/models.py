@@ -1,3 +1,6 @@
+import email
+from pyexpat import model
+from statistics import mode
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models.fields.related import ForeignKey
@@ -30,6 +33,42 @@ class Course(models.Model):
 
     def __str__(self):
         return f"{self.title} by {self.user}"
+
+class Instructor(models.Model):
+    # The course taught by instructor
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False, blank=True, related_name="instructors")
+
+    # Titles
+    DOCTOR = "DR"
+    HONORABLE = "HO"
+    JUNIOR = "JR"
+    MISTER = "MR"
+    MISSES = "MS"
+    MISS = "MI"
+    PROFESSOR = "PR"
+    SENIOR = "SR"
+    
+    TITLES = [
+        (DOCTOR, "Dr."),
+        (HONORABLE, "Hon."),
+        (JUNIOR, "Jr."),
+        (MISTER, "Mr."),
+        (MISSES, "Mrs."),
+        (MISS, "Ms"),
+        (PROFESSOR, "Prof."),
+        (SENIOR, "Sr."),
+        ]
+
+    title = models.CharField(max_length=2, choices=TITLES, default=PROFESSOR, null=False, blank=False)
+
+    # First Name
+    first_name = models.CharField(max_length=64, null=False, blank=False)
+
+    # Last Name
+    title = models.CharField(max_length=64, null=True, blank=True)
+
+    # Email of the Instructor
+    email = models.EmailField(max_length=256, null=True, blank=True, unique=True)
 
 class Note(models.Model):
     # The course note belongs to
