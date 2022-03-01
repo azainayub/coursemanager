@@ -65,7 +65,7 @@ class Instructor(models.Model):
     first_name = models.CharField(max_length=64, null=False, blank=False)
 
     # Last Name
-    title = models.CharField(max_length=64, null=True, blank=True)
+    last_name = models.CharField(max_length=64, null=True, blank=True)
 
     # Email of the Instructor
     email = models.EmailField(max_length=256, null=True, blank=True, unique=True)
@@ -93,6 +93,25 @@ class File(models.Model):
     # Name of the file
     name = models.CharField(max_length=255, null=False, blank=False)
 
+    # Categories
+    ASSIGNMENT = "AS"
+    DOCUMENT = "DO"
+    JOURNAL = "JO"
+    QUIZ = "QU"
+    SLIDES = "SL"
+    OTHER = "OT"
+
+    CATEGORIES = [
+        (ASSIGNMENT, "Assignment"),
+        (DOCUMENT, "Document"),
+        (JOURNAL, "Journal"),
+        (QUIZ, "Quiz"),
+        (SLIDES, "Slides"),
+        (OTHER, "Other"),
+    ]
+
+    catergory = models.CharField(max_length=2, choices=CATEGORIES, default=OTHER, null=False, blank=False)
+    
     # File
     file = models.FileField(null=False, blank=False)
 
