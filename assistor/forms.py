@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import EmailInput, PasswordInput, TextInput
+from django.forms import EmailInput, PasswordInput, TextInput, DateInput
 from .models import Course, File, Note, Reminder, User
 
 class RegistrationForm(forms.ModelForm):
@@ -25,15 +25,16 @@ class LoginForm(forms.ModelForm):
             "password": PasswordInput(attrs={"class": "form-control form-control-sm"})
         }
 
-class NewCourseForm(forms.ModelForm):
+class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ["title"]
-        labels = {
-            "content": "New Post"
-        }
+        fields = ["title", "start_date", "completion_date", "grade", "provider"]
         widgets = {
-
+            "title": TextInput(attrs={"class": "form-control form-control-sm"}),
+            "start_date": DateInput(attrs={"class": "form-control form-control-sm"}),
+            "completion_date": DateInput(attrs={"class": "form-control form-control-sm"}),
+            "grade": TextInput(attrs={"class": "form-control form-control-sm"}),
+            "provider": TextInput(attrs={"class": "form-control form-control-sm"})
         }
 
 class NewNoteForm(forms.ModelForm):
