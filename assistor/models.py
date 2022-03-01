@@ -65,7 +65,7 @@ class Reminder(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=True, related_name="reminders")
 
     # Name of the reminder
-    name = models.CharField(max_length=64, null=False, blank=False)
+    name = models.CharField(max_length=256, null=False, blank=False)
 
     # Time of the reminder
     time = models.DateTimeField(null=False, blank=False)
