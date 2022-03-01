@@ -3,31 +3,30 @@
 {% block title %}Login{% endblock %}
 
 {% block main %}
-
-    <form class="row g-3 p-4 mx-auto shadow rounded" action="{% url 'login' %}" method="post">
-        <h2>
-            <span class="material-icons-outlined fs-2">
-                login
-            </span>
-            Login
-        </h2>
-        {% csrf_token %}
-        <div class="col-md-6">
-            {{ form.errors }}
-        </div>
-        <div class="col-md-12">
-            {{ form.username.errors }}
-            <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label }}:</label>
-            {{ form.username }}
-        </div>
-        <div class="col-md-12">
-            {{ form.password.errors }}
-            <label for="{{ form.password.id_for_label }}" class="form-label">{{ form.password.label }}:</label>
-            {{ form.password }}
-        </div>
-        <div class="col-md-2 mx-auto">
-            <input class="btn btn-primary" type="submit" value="Login">
-        </div>
-    </form>
-
+    <div class="container mt-5 mb-5">
+        <form class="row g-3 p-4 mx-auto shadow rounded" action="{% url 'login' %}" method="post">
+            <h2>
+                <span class="material-icons-outlined fs-2">
+                    login
+                </span>
+                Login
+            </h2>
+            {% csrf_token %}
+            <div class="col-md-6">
+                {{ form.errors }}
+            </div>
+            <div class="col-md-12">
+                <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label }}:</label>
+                {{ form.username }}
+            </div>
+            <div class="col-md-12">
+                {{ form.password.errors }}
+                <label for="{{ form.password.id_for_label }}" class="form-label">{{ form.password.label }}:</label>
+                {{ form.password }}
+            </div>
+            <div class="col-md-2 mx-auto">
+                <input class="btn btn-primary" type="submit" value="Login">
+            </div>
+        </form>
+    </div>
 {% endblock %}
