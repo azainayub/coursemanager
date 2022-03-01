@@ -78,7 +78,7 @@ class Note(models.Model):
     title = models.CharField(max_length=64, null=False, blank=False)
 
     # Content of the note
-    content = models.CharField(max_length=2048 , null=False, blank=False)
+    content = models.CharField(max_length=8192 , null=False, blank=False)
 
     # Time of creation
     creation_time = models.DateTimeField(auto_now=True, null=False, blank=True)
