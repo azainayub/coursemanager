@@ -5,45 +5,85 @@
 Home
 {% endblock %}
 
-{% block body %}
-    <div class="container">
-        <section id="reminders">
-            <div class="bar">
+{% block main %}
+    <div class="container mt-5 mb-5">
+        <section id="courses">
+            <!-- courses header -->
+            <div class="d-flex justify-content-between">
                 <div>
-                    <img src="{% static 'assistor/reminder.svg' %}">
-                    Reminders
+                    <h2>
+                        <span class="material-icons-outlined fs-2">
+                            subject
+                        </span>
+                    Courses
+                </h2>
                 </div>
-                <div><a href="{% url 'reminder_new' %}"><button>+</button></a></div>
+                <div>
+                    <a href="{% url 'course_new' %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
+                </div>
             </div>
     
-            {% for reminder in reminders %}
-            <div class="reminder">
-                <div>{{ reminder.name }} on {{ reminder.time }}</div>
-                <div>
-                    <a href="{% url 'reminder_delete' reminder.id %}"><img src="{% static 'assistor/delete.svg' %}" alt="Delete Reminder"></a>
-                </div>
-            </div>
-            {% endfor %}
-        </section>
-
-        <section id="courses">
-            <div class="bar">
-                <div>
-                    <img src="{% static 'assistor/course.svg' %}">
-                    Courses
-                </div>
-                <div>
-                    <a href="{% url 'course_new' %}"><button>+</button></a>
-                </div>
+            <!-- list of courses -->
+            <div class="row">
+                {% for course in courses %}
+                <div class="col-sm-3">
+                    <div class="card">
+                      <div class="card-body">
+                        <h5 class="card-title">{{ course.title }}</h5>
+                        <a href="{% url 'course' course.id %}" class="btn btn-primary">View</a>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
             </div>
 
+            <!-- show view all -->
+            {% if courses.count == 4 %}
+            <div class="d-flex justify-content-end m-3">
+                <div><a href="#" class="link-secondary">View all</a></div>
+            </div>
+            {% endif %}
             
-            {% for course in courses %}
-            <div class="course">
-                <div>{{ course.title }}</div>
-                <div><a href="{% url 'course' course.id %}" class="btn btn-primary">View</a></div>
+        </section>
+    
+        <section id="reminders" class="mt-5">
+            <!-- reminders header -->
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h2>
+                        <span class="material-icons-outlined fs-2">
+                            insert_invitation
+                        </span>
+                    Reminders
+                </h2>
+                </div>
+                <div>
+                    <a href="{% url 'reminder_new' %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
+                </div>
             </div>
-            {% endfor %}
+    
+             <!-- list of reminders -->
+             <div class="row">
+                {% for reminder in reminders %}
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ reminder.name }}</h5>
+                            <p class="card-text">{{ reminder.time }}</p>
+                            <a href="#" class="btn btn-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- show view all -->
+            {% if reminders.count == 4 %}
+            <div class="d-flex justify-content-end m-3">
+                <div><a href="#" class="link-secondary">View all</a></div>
+            </div>
+            {% endif %}
         </section>
     </div>
+
 {% endblock %}

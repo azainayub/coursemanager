@@ -6,15 +6,15 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
 from .models import Course, Note, Reminder, User, File
-from .forms import RegistrationForm, LoginForm, NewCourseForm, NewFileForm, NewNoteForm, NewReminderForm
+from .forms import RegistrationForm, LoginForm, CourseForm, NewFileForm, NewNoteForm, NewReminderForm
 
 # Create your views here.
 @login_required(login_url="login")
 def index(request):
     # Default page number
     return render(request, "assistor/index.html", {
-        "courses": request.user.courses.all(),
-        "reminders": request.user.reminders.all()
+        "courses": request.user.courses.all()[:4],
+        "reminders": request.user.reminders.all()[:4]
     })
 
 
@@ -67,11 +67,15 @@ def register(request):
 
         # Attempt to create new user
         try:
-            user = User.objects.create_user(first_name=first_name, last_name=last_name, username=username, email=email, password=password)
-            user.save()
+            if form.is_valid():
+                user = User.objects.create_user(first_name=first_name, last_name=last_name, username=username, email=email, password=password)
+                user.save()
+            else:
+                return render(request, "assistor/register.html", {
+                "form": form
+            })
         except IntegrityError:
             return render(request, "assistor/register.html", {
-                "message": "Username already taken.",
                 "form": form
             }) 
         login(request, user)
@@ -131,14 +135,14 @@ def note(request, course_id, note_id):
 
 @login_required(login_url="login")
 def new_course(request):
-    form = NewCourseForm()
+    form = CourseForm()
 
     # Add a new course
     if request.method == "POST":
         
         # Assign the form data from request
         course = Course(user=request.user)
-        form = NewCourseForm(request.POST, instance=course)
+        form = CourseForm(request.POST, instance=course)
 
         # Validate the form data
         if form.is_valid():
