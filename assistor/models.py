@@ -111,9 +111,22 @@ class File(models.Model):
     ]
 
     catergory = models.CharField(max_length=2, choices=CATEGORIES, default=OTHER, null=False, blank=False)
-    
+
     # File
     file = models.FileField(null=False, blank=False)
+
+    # Time of creation
+    creation_time = models.DateTimeField(auto_now=True, null=False, blank=True)
+
+class Link(models.Model):
+    # The course the link belongs to
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False, blank=True, related_name="links")
+
+    # Name of the link
+    name = models.CharField(max_length=256, null=False, blank=False)
+
+    # URL
+    url = models.URLField(max_length=2048, null=False, blank=False)
 
     # Time of creation
     creation_time = models.DateTimeField(auto_now=True, null=False, blank=True)
