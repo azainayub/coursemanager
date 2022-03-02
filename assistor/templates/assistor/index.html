@@ -40,7 +40,7 @@ Home
             <!-- show view all -->
             {% if courses.count == 4 %}
             <div class="d-flex justify-content-end m-3">
-                <div><a href="#" class="link-secondary">View all</a></div>
+                <div><a href="{% url 'courses' %}" class="link-secondary">View all</a></div>
             </div>
             {% endif %}
             

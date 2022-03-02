@@ -87,6 +87,15 @@ def register(request):
         })
 
 @login_required(login_url="login")
+def courses(request):
+    """
+    Display all courses of user
+    """
+    return render(request, "assistor/courses.html", {
+        "courses": request.user.courses.all()
+    })
+
+@login_required(login_url="login")
 def course(request, id):
     try:
         # Retreive course from database
