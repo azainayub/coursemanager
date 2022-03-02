@@ -54,8 +54,7 @@ Course
         <!-- show view all -->
         {% if notes.count == 4 %}
         <div class="d-flex justify-content-end m-3">
-            <!-- to do url to notes -->
-            <div><a href="#" class="link-secondary">View all</a></div>
+            <div><a href="{% url 'notes' course.id %}" class="link-secondary">View all</a></div>
         </div>
         {% endif %}
     </section>

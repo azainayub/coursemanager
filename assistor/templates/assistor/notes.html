@@ -1,0 +1,38 @@
+{% extends 'assistor/layout.html' %}
+
+{% block title %}
+Notes
+{% endblock %}
+
+{% block main %}
+    <div class="container mt-5 mb-5">
+        <!-- notes header -->
+        <div class="d-flex justify-content-between">
+            <div>
+                <h2>
+                    <span class="material-icons-outlined fs-2">
+                        description
+                    </span>
+                Notes
+            </h2>
+            </div>
+            <div>
+                <a href="{% url 'note_new' course.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
+            </div>
+        </div>
+
+        <!-- list of notes -->
+        <div class="row">
+            {% for note in notes %}
+            <div class="col-sm-3 mb-4">
+                <div class="card note bg-light-orange text-orange">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ note.title }}</h5>
+                    <a href="{% url 'notes' course.id note.id %}" class="btn btn-primary">View</a>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
