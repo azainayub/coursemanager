@@ -5,7 +5,7 @@ from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
-from .models import Course, Note, Reminder, User, File
+from .models import Course, Note, Reminder, User, File, Instructor, Link
 from .forms import RegistrationForm, LoginForm, CourseForm, NewFileForm, NewNoteForm, NewReminderForm
 
 # Create your views here.
@@ -107,8 +107,10 @@ def course(request, id):
             # Show the course
             return render(request, "assistor/course.html", {
                 "course": course,
-                "notes": Note.objects.filter(course=course),
-                "files": File.objects.filter(course=course)
+                "notes": Note.objects.filter(course=course)[:4],
+                "files": File.objects.filter(course=course)[:4],
+                "instructors": Instructor.objects.filter(course=course),
+                "links": Link.objects.filter(course=course)
             })
         
         # Deny access to unauthorized user

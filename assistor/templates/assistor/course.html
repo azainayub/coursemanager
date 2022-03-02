@@ -1,26 +1,166 @@
 {% extends 'assistor/layout.html' %}
 
-{% block body %}
-    <h1>{{ course.title }}</h1>
-    <a href="{% url 'course_delete' course.id %}"><button>Delete</button></a>
-    
-    <h2>Notes</h2>
-    <a href="{% url 'note_new' course.id %}"><button>New Note</button></a>
-    <section id="notes">
-        <ul>
-        {% for note in notes %}
-            <li><a href="{% url 'note' course.id note.id %}">{{ note.title }}</a><a href="{% url 'note_delete' course.id note.id %}"><button>Delete</button></a></li>
-        {% endfor %} 
-        </ul>
+{% block title %}
+Course
+{% endblock %}
+{% block main %}
+<div class="container mt-5 mb-5 overflow-hidden">
+    <!-- Header of the course -->
+    <section id="course-header" class="mb-5">
+        <div class="d-flex justify-content-between">
+            <div class="w-75"><h1>{{ course.title }}</h1></div>
+            <div>
+                <a href="{% url 'course_delete' course.id %}"><button type="button" class="btn btn-link text-danger"><span class="material-icons-outlined fs-2">delete</span></button></a>
+                <a href="{% url 'course_edit' course.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">edit</span></button></a>
+            </div>
+        </div>
+        <div id="course-details">
+            <div>{% if course.provider %}{{ course.provider }}{% endif %}</div>
+            <div>{% if course.start_date %}{{ course.start_date }}{% endif %}{% if course.completion_date %} to {{ course.completion_date }}{% endif %}</div>
+            <div>{% if course.grade %}{{ course.grade }}{% endif %}</div>
+        </div>
     </section>
 
-    <h2>Files</h2>
-    <a href="{% url 'file_new' course.id %}"><button>New File</button></a>
-    <section id="files">
-        <ul>
-        {% for file in files %}
-            <li><a download href="{{ file.file.url }}">{{ file.name }}</a><a href="{% url 'file_delete' course.id file.id %}"><button>Delete</button></a></li>
-        {% endfor %} 
-        </ul>
+    <section id="notes" class="mb-5">
+        <!-- notes header -->
+        <div class="d-flex justify-content-between">
+            <div>
+                <h2>
+                    <span class="material-icons-outlined fs-2">
+                        description
+                    </span>
+                Notes
+            </h2>
+            </div>
+            <div>
+                <a href="{% url 'note_new' course.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
+            </div>
+        </div>
+
+        <!-- list of notes -->
+        <div class="row">
+            {% for note in notes %}
+            <div class="col-sm-3">
+                <div class="card note bg-light-orange text-orange">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ note.title }}</h5>
+                    <a href="{% url 'notes' course.id note.id %}" class="btn btn-outline-primary">View</a>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+        </div>
+
+        <!-- show view all -->
+        {% if notes.count == 4 %}
+        <div class="d-flex justify-content-end m-3">
+            <!-- to do url to notes -->
+            <div><a href="#" class="link-secondary">View all</a></div>
+        </div>
+        {% endif %}
     </section>
+
+    <section id="files" class="mb-5">
+        <!-- files header -->
+        <div class="d-flex justify-content-between">
+            <div>
+                <h2>
+                    <span class="material-icons-outlined fs-2">
+                        folder
+                    </span>
+                Files
+            </h2>
+            </div>
+            <div>
+                <a href="{% url 'file_new' course.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
+            </div>
+        </div>
+
+        <!-- list of files -->
+        <div class="row">
+            {% for file in files %}
+            <div class="col-sm-3">
+                <div class="card bg-light-brown text-brown">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ file.name }}</h5>
+                    <!-- to do file url -->
+                    <a href="#" class="btn btn-primary">View</a>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+        </div>
+
+        <!-- show view all -->
+        {% if files.count == 4 %}
+        <div class="d-flex justify-content-end m-3">
+            <!-- to do url to files -->
+            <div><a href="#" class="link-secondary">View all</a></div>
+        </div>
+        {% endif %}
+    </section>
+
+    <section id="instructors" class="mb-5">
+        <!-- instructors header -->
+        <div class="d-flex justify-content-between">
+            <div>
+                <h2>
+                    <span class="material-icons-outlined fs-2">
+                        people
+                    </span>
+                Instructors
+            </h2>
+            </div>
+            <div>
+                <!-- to do new instructor url -->
+                <a href="#"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
+            </div>
+        </div>
+
+        <!-- list of instructors -->
+        <div class="row">
+            {% for instructor in instructors %}
+            <div class="col-sm-12 mb-3">
+                <div class="card bg-light-green text-green">
+                    <div class="card-body">
+                      <h5 class="card-title">{{ instructor.title }} {{ instructor.first_name }} {{ instructor.last_name }}</h5>
+                      <a href="mailto:{{ instructor.email }}" class="card-link">{{ instructor.email }}</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section id="links" class="mb-5">
+        <!-- links header -->
+        <div class="d-flex justify-content-between">
+            <div>
+                <h2>
+                Links
+            </h2>
+            </div>
+            <div>
+                <!-- to do new link url -->
+                <a href="#"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
+            </div>
+        </div>
+
+        <!-- list of instructors -->
+        <div class="row">
+            {% for link in links %}
+            <div class="col-sm-12 mb-3">
+                <div class="card bg-light-cyan text-cyan">
+                    <div class="card-body">
+                      <h5 class="card-title">{{ link.name }}</h5>
+                      <a href="{{ link.url }}" class="card-link" target="blank"><span class="material-icons-outlined">
+                        link
+                    </span>{{ link.url }}</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
 {% endblock %}

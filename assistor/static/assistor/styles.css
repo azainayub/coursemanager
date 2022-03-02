@@ -1,1 +1,48 @@
+/* content colors */
+.bg-light-purple {
+    background-color: #EDE7F6;
+}
 
+.bg-light-teal {
+    background-color: #E0F2F1;
+}
+
+.bg-light-orange {
+    background-color: #FFF3E0;
+}
+
+.bg-light-brown {
+    background-color: #EFEBE9;
+}
+
+.bg-light-green {
+    background-color: #E8F5E9;
+}
+
+.bg-light-cyan {
+    background-color: #E0F7FA;
+}
+
+.text-purple {
+    color: #311B92;
+}
+
+.text-teal {
+    color: #E0F2F1;
+}
+
+.text-orange {
+    color: #E65100;
+}
+
+.text-brown {
+    color: #3E2723;
+}
+
+.text-green {
+    color: #1B5E20;
+}
+
+.text-cyan {
+    color: #006064;
+}
