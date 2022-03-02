@@ -120,6 +120,51 @@ def course(request, id):
         return HttpResponseNotFound()
 
 @login_required(login_url="login")
+def course_edit(request, id):
+    """
+    Edit a course
+    """
+    form = CourseForm()
+    
+    # Edit a course
+    if request.method == "POST":
+        # Assign the form data from request
+        try:
+            course = Course.objects.get(id=id, user=request.user)
+            form = CourseForm(request.POST, instance=course)
+
+            # Validate the form data
+            if form.is_valid():
+                course.title = form.cleaned_data["title"]
+                course.start_date = form.cleaned_data["start_date"]
+                course.end_date = form.cleaned_data["completion_date"]
+                course.grade = form.cleaned_data["grade"]
+                course.provider = form.cleaned_data["provider"]
+
+                # Save the edited course
+                course.save()
+                return HttpResponseRedirect(reverse("course", args=[course.id]))
+
+        except Course.DoesNotExist:
+            return HttpResponseNotFound()
+
+    else:
+        try:
+            # Fill the form with course data
+            course = Course.objects.get(id=id, user=request.user)
+            form = CourseForm(instance=course)
+
+            # Show the form for editing course
+            return render(request, "assistor/course_edit.html", {
+                "id": id,
+                "form": form
+            })
+
+        except Course.DoesNotExist:
+            return HttpResponseNotFound()
+
+
+@login_required(login_url="login")
 def note(request, course_id, note_id):
     try:
         # Retreive note from database

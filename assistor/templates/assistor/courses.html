@@ -1,0 +1,39 @@
+{% extends 'assistor/layout.html' %}
+{% load static %}
+
+{% block title %}
+    Courses
+{% endblock %}
+
+{% block main %}
+    <div class="container mt-5">
+        <!-- courses header -->
+        <div class="d-flex justify-content-between">
+            <div>
+                <h2>
+                    <span class="material-icons-outlined fs-2">
+                        subject
+                    </span>
+                Courses
+            </h2>
+            </div>
+            <div>
+                <a href="{% url 'course_new' %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
+            </div>
+        </div>
+
+        <!-- list of courses -->
+        <div class="row">
+            {% for course in courses %}
+            <div class="col-sm-3 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <a href="{% url 'course' course.id %}" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
