@@ -5,6 +5,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models.fields.related import ForeignKey
 
+from django.utils.translation import gettext_lazy as _
+
 
 class User(AbstractUser):
     pass
@@ -37,29 +39,19 @@ class Course(models.Model):
 class Instructor(models.Model):
     # The course taught by instructor
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False, blank=True, related_name="instructors")
-
-    # Titles
-    DOCTOR = "DR"
-    HONORABLE = "HO"
-    JUNIOR = "JR"
-    MISTER = "MR"
-    MISSES = "MS"
-    MISS = "MI"
-    PROFESSOR = "PR"
-    SENIOR = "SR"
     
-    TITLES = [
-        (DOCTOR, "Dr."),
-        (HONORABLE, "Hon."),
-        (JUNIOR, "Jr."),
-        (MISTER, "Mr."),
-        (MISSES, "Mrs."),
-        (MISS, "Ms"),
-        (PROFESSOR, "Prof."),
-        (SENIOR, "Sr."),
-        ]
+    class Titles(models.TextChoices):
+        # Titles
+        DOCTOR = "DR", _("Dr.")
+        HONORABLE = "HO", _("Hon.")
+        JUNIOR = "JR", _("Jr.")
+        MISTER = "MR", _("Mr.")
+        MISSES = "MS", _("Mrs.")
+        MISS = "MI", _("Ms.")
+        PROFESSOR = "PR", _("Prof.")
+        SENIOR = "SR", _("Sr.")
 
-    title = models.CharField(max_length=2, choices=TITLES, default=PROFESSOR, null=False, blank=False)
+    title = models.CharField(max_length=2, choices=Titles.choices, default=Titles.PROFESSOR, null=False, blank=False)
 
     # First Name
     first_name = models.CharField(max_length=64, null=False, blank=False)
@@ -69,6 +61,9 @@ class Instructor(models.Model):
 
     # Email of the Instructor
     email = models.EmailField(max_length=256, null=True, blank=True, unique=True)
+
+    def get_name(self):
+        return self.title.label + " " + self.first_name + " " + self.last_name
 
 class Note(models.Model):
     # The course note belongs to
