@@ -1,3 +1,4 @@
+from cmath import log
 from django.http.response import Http404, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
@@ -165,6 +166,16 @@ def course_edit(request, id):
         except Course.DoesNotExist:
             return HttpResponseNotFound()
 
+@login_required(login_url="login")
+def notes(request, id):
+    """
+    Display all notes of the course
+    """
+    course = Course.objects.get(id=id)
+    return render(request, "assistor/notes.html", {
+        "course": course,
+        "notes": course.notes.all()
+    })
 
 @login_required(login_url="login")
 def note(request, course_id, note_id):
