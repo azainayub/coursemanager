@@ -4,9 +4,51 @@
     Note
 {% endblock %}
 
-{% block body %}
-    <h1><a href="{% url 'course' note.course.id %}">{{ note.course.title }}</a></h1>
+{% block main %}
+    <div class="container mt-5 mb-5 overflow-hidden">
+        <!-- course header -->
+        <section id="course-header" class="mb-5">
+            <div class="d-flex justify-content-between">
+                <div class="w-75"><h1>{{ course.title }}</h1></div>
+                <div>
+                    <a href="{% url 'course_delete' course.id %}"><button type="button" class="btn btn-link text-danger"><span class="material-icons-outlined fs-2">delete</span></button></a>
+                    <a href="{% url 'course_edit' course.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">edit</span></button></a>
+                </div>
+            </div>
+            <div id="course-details">
+                <div>{% if course.provider %}{{ course.provider }}{% endif %}</div>
+                <div>{% if course.start_date %}{{ course.start_date }}{% endif %}{% if course.completion_date %} to {{ course.completion_date }}{% endif %}</div>
+                <div>{% if course.grade %}{{ course.grade }}{% endif %}</div>
+            </div>
+        </section>
 
-    <h2>{{ note.title }}</h2>
-    <p>{{ note.content }}</p>
+        <!-- notes header -->
+        <div class="d-flex justify-content-between">
+            <div>
+                <h2>
+                    <span class="material-icons-outlined fs-2">
+                        description
+                    </span>
+                Notes
+            </h2>
+            </div>
+        </div>
+
+        <!-- note header -->
+        <div class="d-flex justify-content-between">
+            <div>
+                <h3 class="text-orange">{{ note.title }}</h3>
+            </div>
+            <div>
+                <!-- to do note edit url -->
+                <a href="{% url 'note_delete' course.id note.id %}"><button type="button" class="btn btn-link text-danger"><span class="material-icons-outlined fs-2">delete</span></button></a>
+                <a href="#"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">edit</span></button></a>
+            </div>
+        </div>
+
+        <!-- note content -->
+        <div class="container p-3 bg-light-orange text-orange">
+            <p>{{ note.content }}</p>
+        </div>
+    </div>
 {% endblock %}

@@ -180,14 +180,16 @@ def notes(request, id):
 @login_required(login_url="login")
 def note(request, course_id, note_id):
     try:
-        # Retreive note from database
-        note = Note.objects.get(id=note_id)
+        # Retreive note and course from database
+        course = Course.objects.get(id=course_id)
+        note = Note.objects.get(id=note_id, course=course)
 
         # Allow only the note creator to access
         if note.course.user == request.user:
             
             # Show the note
             return render(request, "assistor/note.html", {
+                "course" : Course.objects.get(id=course_id),
                 "note" : note
             })
 
@@ -196,7 +198,7 @@ def note(request, course_id, note_id):
             return HttpResponseForbidden()
 
     # Note with note_id doesn't exist
-    except Note.DoesNotExist:
+    except (Note.DoesNotExist, Course.DoesNotExist):
         return HttpResponseNotFound()
 
 
