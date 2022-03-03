@@ -17,6 +17,7 @@ urlpatterns = [
     path("courses/<int:course_id>/notes/new", views.note_new, name="note_new"),
     path("courses/<int:course_id>/notes/<int:note_id>/edit", views.note_edit, name="note_edit"),
     path("courses/<int:course_id>/notes/<int:note_id>/delete", views.note_delete, name="note_delete"),
+    path("courses/<int:course_id>/files", views.files, name="files"),
     path("courses/<int:course_id>/files/new", views.new_file, name="file_new"),
     path("courses/<int:course_id>/files/<int:file_id>/delete", views.file_delete, name="file_delete"),
     path("reminders/new", views.new_reminder, name="reminder_new"),

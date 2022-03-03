@@ -314,6 +314,18 @@ def note_edit(request, course_id, note_id):
         except (Course.DoesNotExist, Note.DoesNotExist):
             return HttpResponseNotFound()
 
+
+@login_required(login_url="login")
+def files(request, course_id):
+    """
+    Show all files of a course
+    """
+    course = Course.objects.get(id=course_id)
+    return render(request, "assistor/files.html", {
+        "course": course,
+        "files": File.objects.filter(course=course)
+    })
+
 @login_required(login_url="login")
 def course_delete(request, id):
     # Retreive course from database

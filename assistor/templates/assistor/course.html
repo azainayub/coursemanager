@@ -93,8 +93,7 @@ Course
         <!-- show view all -->
         {% if files.count == 4 %}
         <div class="d-flex justify-content-end m-3">
-            <!-- to do url to files -->
-            <div><a href="#" class="link-secondary">View all</a></div>
+            <div><a href="{% url 'files' course.id %}" class="link-secondary">View all</a></div>
         </div>
         {% endif %}
     </section>

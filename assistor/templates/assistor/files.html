@@ -1,0 +1,39 @@
+{% extends 'assistor/layout.html' %}
+
+{% block title %}
+Files
+{% endblock %}
+
+{% block main %}
+    <div class="container mt-5 mb-5">
+        <!-- files header -->
+        <div class="d-flex justify-content-between">
+            <div>
+                <h2>
+                    <span class="material-icons-outlined fs-2">
+                        folder
+                    </span>
+                Files
+            </h2>
+            </div>
+            <div>
+                <a href="{% url 'file_new' course.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
+            </div>
+        </div>
+
+        <!-- list of files -->
+        <div class="row">
+            {% for file in files %}
+            <div class="col-sm-3">
+                <div class="card bg-light-brown text-brown mb-4">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ file.name }}</h5>
+                    <!-- to do file url -->
+                    <a href="#" class="btn btn-primary">View</a>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
