@@ -1,4 +1,5 @@
 from cmath import log
+from sys import excepthook
 from django.http.response import Http404, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
@@ -325,6 +326,19 @@ def files(request, course_id):
         "course": course,
         "files": File.objects.filter(course=course)
     })
+
+@login_required(login_url="login")
+def file(request, course_id, file_id):
+    """
+    Show a file
+    """
+    try:
+        return render(request, 'assistor/file.html', {
+            "course": Course.objects.get(id=course_id),
+            "file": File.objects.get(id=file_id)
+        })
+    except (Course.DoesNotExist, File.DoesNotExist):
+        return HttpResponseNotFound()
 
 @login_required(login_url="login")
 def course_delete(request, id):

@@ -1,0 +1,60 @@
+{% extends "assistor/layout.html" %}
+
+{% block title %}
+    File
+{% endblock %}
+
+{% block main %}
+    <div class="container mt-5 mb-5 overflow-hidden">
+        <!-- course header -->
+        <section id="course-header" class="mb-5">
+            <div class="d-flex justify-content-between">
+                <div class="w-75"><h1>{{ course.title }}</h1></div>
+                <div>
+                    <a href="{% url 'course_delete' course.id %}"><button type="button" class="btn btn-link text-danger"><span class="material-icons-outlined fs-2">delete</span></button></a>
+                    <a href="{% url 'course_edit' course.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">edit</span></button></a>
+                </div>
+            </div>
+            <div id="course-details">
+                <div>{% if course.provider %}{{ course.provider }}{% endif %}</div>
+                <div>{% if course.start_date %}{{ course.start_date }}{% endif %}{% if course.completion_date %} to {{ course.completion_date }}{% endif %}</div>
+                <div>{% if course.grade %}{{ course.grade }}{% endif %}</div>
+            </div>
+        </section>
+
+        <!-- files header -->
+        <div class="d-flex justify-content-between">
+            <div>
+                <h2>
+                    <span class="material-icons-outlined fs-2">
+                        folder
+                    </span>
+                Files
+            </h2>
+            </div>
+        </div>
+
+        <!-- file header -->
+        <div class="d-flex justify-content-between">
+            <div>
+                <h3 class="text-orange">{{ file.name }}</h3>
+            </div>
+            <div>
+                <!-- to do file edit url -->
+                <a href="{% url 'file_delete' course.id file.id %}"><button type="button" class="btn btn-link text-danger"><span class="material-icons-outlined fs-2">delete</span></button></a>
+                <a href="#"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">edit</span></button></a>
+            </div>
+        </div>
+
+        <div class="container p-3 bg-light-brown text-brown">
+            <span class="material-icons-outlined fs-1">
+                insert_drive_file
+                </span>
+            <p>{{ file.name }}</p>
+            <small class="text-muted">Uploaded on {{ file.creation_time }}</small>
+            <p><a href="{{ file.file.url }}">Download</a></p>
+        </div>
+
+        
+    </div>
+{% endblock %}
