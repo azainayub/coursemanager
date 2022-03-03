@@ -40,9 +40,8 @@
                 <h3 class="text-orange">{{ note.title }}</h3>
             </div>
             <div>
-                <!-- to do note edit url -->
                 <a href="{% url 'note_delete' course.id note.id %}"><button type="button" class="btn btn-link text-danger"><span class="material-icons-outlined fs-2">delete</span></button></a>
-                <a href="#"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">edit</span></button></a>
+                <a href="{% url 'note_edit' course.id note.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">edit</span></button></a>
             </div>
         </div>
 

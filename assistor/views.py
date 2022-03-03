@@ -191,11 +191,11 @@ def course_edit(request, id):
             return HttpResponseNotFound()
 
 @login_required(login_url="login")
-def notes(request, id):
+def notes(request, course_id):
     """
     Display all notes of the course
     """
-    course = Course.objects.get(id=id)
+    course = Course.objects.get(id=course_id)
     return render(request, "assistor/notes.html", {
         "course": course,
         "notes": course.notes.all()
@@ -263,6 +263,56 @@ def note_new(request, course_id):
     except Course.DoesNotExist:
         return HttpResponseNotFound()
 
+@login_required(login_url="login")
+def note_edit(request, course_id, note_id):
+    """
+    Edit a note
+    """ 
+    if request.method == "POST":
+        try:
+            course = Course.objects.get(id=course_id)
+            note = Note.objects.get(id=note_id)
+
+            # Prevent unauthorised user from accessing note editing form
+            if request.user == course.user:
+                form = NoteForm(request.POST, instance=note)
+                if form.is_valid():
+                    note.title = form.cleaned_data["title"]
+                    note.content = form.cleaned_data["content"]
+                    note.save()
+                    return HttpResponseRedirect(reverse("note", args=[course.id, note.id]))
+                else:
+                    form = NoteForm(instance=note)
+                    return render(request, "assistor/note_edit.html", {
+                        "course": course,
+                        "note": note,
+                        "form": form
+                    })
+            else:
+                return HttpResponseForbidden()
+
+        except (Course.DoesNotExist, Note.DoesNotExist):
+            return HttpResponseNotFound()
+
+    else:
+        try:
+            course = Course.objects.get(id=course_id)
+            note = Note.objects.get(id=note_id)
+
+            # Prevent unauthorised user from accessing note editing form
+            if request.user == course.user:
+                form = NoteForm(instance=note)
+                return render(request, "assistor/note_edit.html", {
+                    "course": course,
+                    "note": note,
+                    "form": form
+                })
+
+            else:
+                return HttpResponseForbidden()
+
+        except (Course.DoesNotExist, Note.DoesNotExist):
+            return HttpResponseNotFound()
 
 @login_required(login_url="login")
 def course_delete(request, id):
