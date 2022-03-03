@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
 from .models import Course, Note, Reminder, User, File, Instructor, Link
-from .forms import RegistrationForm, LoginForm, CourseForm, NewFileForm, NewNoteForm, NewReminderForm
+from .forms import RegistrationForm, LoginForm, CourseForm, NewFileForm, NoteForm, NewReminderForm
 
 # Create your views here.
 @login_required(login_url="login")
@@ -86,6 +86,30 @@ def register(request):
         return render(request, "assistor/register.html", {
             'form': form
         })
+
+@login_required(login_url="login")
+def new_course(request):
+    form = CourseForm()
+
+    # Add a new course
+    if request.method == "POST":
+        
+        # Assign the form data from request
+        course = Course(user=request.user)
+        form = CourseForm(request.POST, instance=course)
+
+        # Validate the form data
+        if form.is_valid():
+
+            # Course added successfully
+            form.save()
+            return HttpResponseRedirect(reverse("course", args=[course.id]))    
+
+    # Show the form for adding course
+    return render(request, "assistor/course_new.html", {
+        "form": form
+    })
+
 
 @login_required(login_url="login")
 def courses(request):
@@ -201,29 +225,44 @@ def note(request, course_id, note_id):
     except (Note.DoesNotExist, Course.DoesNotExist):
         return HttpResponseNotFound()
 
-
 @login_required(login_url="login")
-def new_course(request):
-    form = CourseForm()
+def note_new(request, course_id):
+    form = NoteForm()
+    try:
+        # Retreive course from database
+        course = Course.objects.get(id = course_id)
 
-    # Add a new course
-    if request.method == "POST":
+        # Allow only the course creator to add and see note
+        if course.user == request.user:
+
+            # Add new Note
+            if request.method == "POST":
+                
+                # Assign form data from post
+                note = Note(course=course)
+                form = NoteForm(request.POST, instance=note)
+
+                # Validate form data
+                if form.is_valid():
+                    form.save()
+
+                    # Show the note
+                    return HttpResponseRedirect(reverse("note", args=[course_id, note.id]))
+            
+            # Show the form for adding new note
+            return render(request, "assistor/note_new.html", {
+                "course": course,
+                "form": form
+            })
         
-        # Assign the form data from request
-        course = Course(user=request.user)
-        form = CourseForm(request.POST, instance=course)
+        # Deny access to unauthorized user
+        else:
+            return HttpResponseForbidden()
+    
+    # Course doesn't exist in database
+    except Course.DoesNotExist:
+        return HttpResponseNotFound()
 
-        # Validate the form data
-        if form.is_valid():
-
-            # Course added successfully
-            form.save()
-            return HttpResponseRedirect(reverse("course", args=[course.id]))    
-
-    # Show the form for adding course
-    return render(request, "assistor/course_new.html", {
-        "form": form
-    })
 
 @login_required(login_url="login")
 def course_delete(request, id):
@@ -280,43 +319,6 @@ def reminder_delete(request, id):
     else:
         return HttpResponseForbidden()
 
-@login_required(login_url="login")
-def new_note(request, course_id):
-    form = NewNoteForm()
-    try:
-        # Retreive course from database
-        course = Course.objects.get(id = course_id)
-
-        # Allow only the course creator to add and see note
-        if course.user == request.user:
-
-            # Add new Note
-            if request.method == "POST":
-                
-                # Assign form data from post
-                note = Note(course=course)
-                form = NewNoteForm(request.POST, instance=note)
-
-                # Validate form data
-                if form.is_valid():
-                    form.save()
-
-                    # Show the note
-                    return HttpResponseRedirect(reverse("note", args=[course_id, note.id]))
-            
-            # Show the form for adding new note
-            return render(request, "assistor/note_new.html", {
-                "course": course,
-                "form": form
-            })
-        
-        # Deny access to unauthorized user
-        else:
-            return HttpResponseForbidden()
-    
-    # Course doesn't exist in database
-    except Course.DoesNotExist:
-        return HttpResponseNotFound()
 
 @login_required(login_url="login")
 def note_delete(request, course_id, note_id):

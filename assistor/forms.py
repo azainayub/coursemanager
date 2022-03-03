@@ -37,16 +37,13 @@ class CourseForm(forms.ModelForm):
             "provider": TextInput(attrs={"class": "form-control form-control-sm"})
         }
 
-class NewNoteForm(forms.ModelForm):
+class NoteForm(forms.ModelForm):
     class Meta:
         model = Note
         fields = ["title", "content"]
-        labels = {
-            "title": "Title",
-            "content": "Content"
-        }
         widgets = {
-            "content": forms.Textarea()
+            "title": TextInput(attrs={"class": "form-control form-control-sm"}),
+            "content": forms.Textarea(attrs={"class": "form-control form-control-sm"})
         }
 
 class NewFileForm(forms.ModelForm):
