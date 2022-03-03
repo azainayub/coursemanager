@@ -9,7 +9,16 @@ from django.utils.translation import gettext_lazy as _
 
 
 class User(AbstractUser):
-    pass
+    # First name of the user
+    first_name = models.CharField(max_length=64 , null=False, blank=False)
+
+    # Last name of the user
+    last_name = models.CharField(max_length=64, null=False, blank=False)
+
+    # Email of the user account
+    email = models.CharField(max_length=256, null=False, blank=False, unique=True)
+
+
 
 class Course(models.Model):
     # User who created the course
