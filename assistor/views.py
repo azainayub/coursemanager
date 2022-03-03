@@ -51,42 +51,63 @@ def logout_view(request):
 
 
 def register(request):
+    """
+    Display the registration form :model:`assistor.User`.
+
+    **Context**
+
+    ``user``
+        An instance of :model:`assistor.User`.
+
+    **Template:**
+
+    :template:`assistor/register.html`
+    """
     if request.method == "POST":
         form = RegistrationForm(request.POST)
-        first_name = request.POST["first_name"]
-        last_name = request.POST["last_name"]
-        username = request.POST["username"]
-        email = request.POST["email"]
 
-        # Ensure password matches confirmation
-        password = request.POST["password"]
-        confirmation = request.POST["confirmation"]
-        if password != confirmation:
-            form.add_error("password", "Passwords must match.")
-            return render(request, "assistor/register.html", {
-                "form": form
-            })
+        # Ensure the form data is valid
+        if form.is_valid():
+            first_name = form.cleaned_data["first_name"]
+            last_name = form.cleaned_data["last_name"]
+            username = form.cleaned_data["username"]
+            email = form.cleaned_data["email"]
 
-        # Attempt to create new user
-        try:
-            if form.is_valid():
-                user = User.objects.create_user(first_name=first_name, last_name=last_name, username=username, email=email, password=password)
-                user.save()
-            else:
+            # Ensure password matches confirmation
+            password = request.POST["password"]
+            confirmation = request.POST["confirmation"]
+            if password != confirmation:
+                form.add_error("password", "Passwords must match.")
                 return render(request, "assistor/register.html", {
-                "form": form
-            })
-        except IntegrityError:
+                    "message": "Failed to register account!",
+                    "form": form
+                })
+
+            # Attempt to create new user
+            try:
+                user = User.objects.create_user(first_name=first_name, last_name=last_name, username=username, email=email)
+                login(request, user)
+                return HttpResponseRedirect(reverse("index"))
+            except IntegrityError:
+                return render(request, "assistor/register.html", {
+                    "message": "Failed to register account!",
+                    "form": form
+                })
+        else:
             return render(request, "assistor/register.html", {
                 "form": form
-            }) 
-        login(request, user)
-        return HttpResponseRedirect(reverse("index"))
-    else:
+            })
+    
+    # Request method is get
+    elif request.method == "GET":
         form = RegistrationForm()
         return render(request, "assistor/register.html", {
             'form': form
         })
+    
+    # Only post and get methods are allowed
+    else:
+        return HttpResponseNotAllowed()
 
 @login_required(login_url="login")
 def new_course(request):
