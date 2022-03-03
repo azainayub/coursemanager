@@ -6,12 +6,41 @@ from .views import index
 from .models import Course, User
 
 class RegistrationTestCase(TestCase):
-    def test_user_should_register(self):
-        """Check a user should register account"""
+    def test_user_registers_with_valid_data(self):
+        """Check user successfully registers with valid data"""
         c = Client()
-        c.post("/register", {"first_name":"Azain", "last_name":"Ayub", "username" : "azainayub",
+        response = c.post("/register", {"first_name":"Azain", "last_name":"Ayub", "username" : "azainayub",
         "email":"azain.ayub2014@gmail.com", "password":"azain", "confirmation": "azain"})
-        self.assertEquals(User.objects.all().count(), 1)
+        self.assertEqual(response.status_code, 302)
+
+    def test_user_register_fails_without_first_name(self):
+        """Check registration fails without first name"""
+        c = Client()
+        response = c.post("/register", {"last_name":"Ayub", "username" : "azainayub",
+        "email":"azain.ayub2014@gmail.com", "password":"azain", "confirmation": "azain"})
+        self.assertNotEqual(response.status_code, 302)
+
+    def test_user_register_fails_without_email(self):
+        """Check registration fails without email name"""
+        c = Client()
+        response = c.post("/register", {"first_name":"Azain", "last_name":"Ayub", "username" : "azainayub", 
+        "password":"azain", "confirmation": "azain"})
+        self.assertNotEqual(response.status_code, 302)
+
+    def test_user_register_fails_without_username(self):
+        """Check registration fails without username"""
+        c = Client()
+        response = c.post("/register", {"first_name":"Azain", "last_name":"Ayub", "email":"azain.ayub2014@gmail.com", 
+        "password":"azain", "confirmation": "azain"})
+        self.assertNotEqual(response.status_code, 302)
+
+    def test_user_register_fails_without_same_password_confirmation(self):
+        """Check registration fails without same password and confirmation"""
+        c = Client()
+        response = c.post("/register", {"first_name":"Azain", "last_name":"Ayub", "email":"azain.ayub2014@gmail.com", 
+        "password":"azaina", "confirmation": "azainb"})
+        self.assertNotEqual(response.status_code, 302)
+
 
 class LoginTestCase(TestCase):
     def setUp(self):
