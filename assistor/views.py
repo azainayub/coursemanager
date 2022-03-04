@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
 from .models import Course, Note, Reminder, User, File, Instructor, Link
-from .forms import RegistrationForm, LoginForm, CourseForm, NewFileForm, NoteForm, NewReminderForm
+from .forms import RegistrationForm, LoginForm, CourseForm, FileForm, NoteForm, NewReminderForm
 
 # Create your views here.
 @login_required(login_url="login")
@@ -469,23 +469,44 @@ def note_delete(request, course_id, note_id):
 
 @login_required(login_url="login")
 def new_file(request, course_id):
+    """
+    Display the file form :model:`assistor.File`.
+
+    **Context**
+
+    ``course``
+        An instance of :model:`assistor.course`.
+
+    ``form``
+        An instance of :form:`assistor.FileForm`.
+        
+    **Template:**
+
+    :template:`assistor/file_new.html`
+    """
     try:
-        form = NewFileForm()
+        form = FileForm()
 
         # Retreive course from database
-        course = Course(id = course_id)
+        course = Course.objects.get(id=course_id)
         
         # Add new file
         if request.method == "POST":
 
             # Assign form data from post
             file = File(course=course)
-            form = NewFileForm(request.POST, request.FILES, instance=file)
+            form = FileForm(request.POST, request.FILES, instance=file)
 
             # Validate the form data
             if form.is_valid():
                 form.save()
                 return HttpResponseRedirect(reverse("course", args=[course.id]))
+            else:
+                return render(request, "assistor/file_new.html", {
+                "message": "Failed to add file!",
+                "course": course,
+                "form": form
+            })
             
         # Show form for adding a new file
         return render(request, "assistor/file_new.html", {

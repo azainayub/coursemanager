@@ -44,13 +44,17 @@ class NoteForm(forms.ModelForm):
             "content": forms.Textarea(attrs={"class": "form-control form-control-sm"})
         }
 
-class NewFileForm(forms.ModelForm):
+class FileForm(forms.ModelForm):
     class Meta:
         model = File
-        fields = ["name", "file"]
-        labels = {
-            "name": "Name",
-            "file": "File"
+        fields = ["name", "category" , "file"]
+        widgets = {
+            "name": TextInput(attrs={"class": "form-control form-control-sm"}),
+            "category": forms.Select(attrs={
+                "class": "form-select form-select-sm",
+                "aria-label": ".form-select-sm"
+                }),
+            "file": forms.FileInput(attrs={"class": "form-control form-control-sm"})
         }
 
 class NewReminderForm(forms.ModelForm):
