@@ -15,15 +15,13 @@ class RegistrationForm(forms.ModelForm):
             "password": PasswordInput(attrs={"class": "form-control form-control-sm"})
         }
 
-class LoginForm(forms.ModelForm):
-    class Meta:
-        error_css_class = 'text-danger'
-        model = User
-        fields = ["username", "password"]
-        widgets = {
-            "username": TextInput(attrs={"class": "form-control form-control-sm"}),
-            "password": PasswordInput(attrs={"class": "form-control form-control-sm"})
-        }
+class LoginForm(forms.Form):
+    # Username
+    username = forms.CharField(max_length=150, required=True, widget=TextInput(attrs={"class": "form-control form-control-sm"}))
+
+    # Password
+    password = forms.CharField(max_length=128, required=True, widget=PasswordInput(attrs={"class": "form-control form-control-sm"}))
+
 
 class CourseForm(forms.ModelForm):
     class Meta:
