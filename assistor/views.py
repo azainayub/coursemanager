@@ -21,28 +21,56 @@ def index(request):
 
 
 def login_view(request):
+    """
+    Display the login form :model:`assistor.User`.
+
+    **Context**
+
+    ``user``
+        An instance of :model:`assistor.User`.
+
+    **Template:**
+
+    :template:`assistor/login.html`
+    """
+    
+    # Process the submitted login form
     if request.method == "POST":
+        form = LoginForm(request.POST)
 
-        # Attempt to sign user in
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
+        # Check if form is valid
+        if form.is_valid():
 
-        # Check if authentication successful
-        if user is not None:
-            login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            # Attempt to sign user in
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+            user = authenticate(request, username=username, password=password)
+
+            # Check if authentication successful
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect(reverse("index"))
+            else:
+                form.add_error("username", "Invalid username and/or password.")
+                return render(request, "assistor/login.html", {
+                    "message": "Failed to login!",
+                    "form": form
+                })
         else:
-            form = LoginForm(request.POST)
-            form.add_error("username", "Invalid username and/or password.")
             return render(request, "assistor/login.html", {
+                "message": "Failed to login!",
                 "form": form
             })
-    else:
-        form = LoginForm()
+
+    # Show the login form
+    elif request.method == "GET":
         return render(request, "assistor/login.html", {
-            "form": form
+            "form": LoginForm()
         })
+    
+    # Only POST and GET allowed
+    else:
+        return HttpResponseNotAllowed()
 
 
 def logout_view(request):

@@ -44,7 +44,7 @@ class RegistrationTestCase(TestCase):
 
 class LoginTestCase(TestCase):
     def setUp(self):
-        # Dummy users
+        # Create some dummy users
         User.objects.create_user(first_name="Azain", last_name="Ayub", username = "azainayub",
         email="azain.ayub2014@gmail.com", password="azain")
         User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
@@ -66,7 +66,13 @@ class LoginTestCase(TestCase):
         """Check an invalid user should not log in"""
         c = Client()
         response = c.post("/login", {"username": "hello", "password": "world"})
-        self.assertEquals(response.context.get("message"), "Invalid username and/or password.")
+        self.assertEquals(response.context.get("message"), "Failed to login!")
+
+    def test_login_incorrect_password(self):
+        """Check user should not login with incorrect password"""
+        c = Client()
+        response = c.post("/login", {"username": "azainayub", "password": "abc"})
+        self.assertEquals(response.context.get("message"), "Failed to login!")
 
 class CourseTestCase(TestCase):
     def setUp(self):
