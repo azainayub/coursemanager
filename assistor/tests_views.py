@@ -1,6 +1,4 @@
-from django.http import response
 from django.test import TestCase, Client
-from django.db import IntegrityError
 
 from .views import index
 from .models import Course, User
@@ -41,14 +39,16 @@ class RegistrationTestCase(TestCase):
         "password":"azaina", "confirmation": "azainb"})
         self.assertNotEqual(response.status_code, 302)
 
-
-class LoginTestCase(TestCase):
+class LoginViewTestCase(TestCase):
+    """
+    Test the login view
+    """
     def setUp(self):
         # Create some dummy users
-        User.objects.create_user(first_name="Azain", last_name="Ayub", username = "azainayub",
-        email="azain.ayub2014@gmail.com", password="azain")
+        User.objects.create_user(first_name="Azain", last_name="Ayub", username = "azain",
+        email="azainayub@...", password="azain")
         User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
-        email="admin@admin.com", password="admin")
+        email="admin@...", password="admin")
 
     def test_login_using_get(self):
         """Check login renders successfully using get"""
@@ -74,7 +74,10 @@ class LoginTestCase(TestCase):
         response = c.post("/login", {"username": "azainayub", "password": "abc"})
         self.assertEquals(response.context.get("message"), "Failed to login!")
 
-class CourseTestCase(TestCase):
+class CourseViewTestCase(TestCase):
+    """
+    Test the course view
+    """
     def setUp(self):
         User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
         email="admin@admin.com", password="admin")
@@ -96,5 +99,4 @@ class CourseTestCase(TestCase):
         c.login(username="admin", password="admin")
         response = c.get("/courses/" + str(Course.objects.get(title ="Human Computer Interaction").id))
         self.assertEquals(response.status_code, 403)
-
 
