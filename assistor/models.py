@@ -114,7 +114,7 @@ class File(models.Model):
         (OTHER, "Other"),
     ]
 
-    catergory = models.CharField(max_length=2, choices=CATEGORIES, default=OTHER, null=False, blank=False)
+    category = models.CharField(max_length=2, choices=CATEGORIES, default=OTHER, null=False, blank=False)
 
     # File
     file = models.FileField(null=False, blank=False)
