@@ -1,7 +1,10 @@
+from turtle import title
+from urllib import response
 from django.test import TestCase, Client
+from django.contrib.auth import login
 
-from .views import index
-from .models import Course, User
+from assistor.views import index
+from assistor.models import Course, User
 
 class RegistrationTestCase(TestCase):
     def test_user_registers_with_valid_data(self):
@@ -100,3 +103,21 @@ class CourseViewTestCase(TestCase):
         response = c.get("/courses/" + str(Course.objects.get(title ="Human Computer Interaction").id))
         self.assertEquals(response.status_code, 403)
 
+class NewFileViewTestCase(TestCase):
+    """
+    Test the new file view
+    """
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        Course.objects.create(user=user, title="Human Computer Interaction")
+
+    def test_new_file_renders(self):
+        c = Client()
+        user = User.objects.get(username="admin")
+        course = Course.objects.get(title="Human Computer Interaction") 
+
+        login(user=user)
+
+        response = c.get(f"courses/{course.id}/files/new")
+        self.assertEqual(response.status_code, 200)
