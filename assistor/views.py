@@ -1,7 +1,7 @@
 from cmath import log
 from sys import excepthook
 from django.http.response import Http404, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseNotFound, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
@@ -484,44 +484,39 @@ def new_file(request, course_id):
 
     :template:`assistor/file_new.html`
     """
-    try:
-        form = FileForm()
+    form = FileForm()
 
-        # Retreive course from database
-        course = Course.objects.get(id=course_id)
+    # Retreive course from database
+    course = get_object_or_404(Course, id=course_id, user=request.user)
 
-        # Add the new file
-        if request.method == "POST":
+    # Add the new file
+    if request.method == "POST":
 
-            # Assign form data from post
-            file = File(course=course)
-            form = FileForm(request.POST, request.FILES, instance=file)
+        # Assign form data from post
+        file = File(course=course)
+        form = FileForm(request.POST, request.FILES, instance=file)
 
-            # Validate the form data
-            if form.is_valid():
-                form.save()
-                return HttpResponseRedirect(reverse("course", args=[course.id]))
-            else:
-                return render(request, "assistor/file_new.html", {
-                "message": "Failed to add file!",
-                "course": course,
-                "form": form
-            })
-
-        # Show the New File Form
-        elif request.method == "GET":
-            return render(request, "assistor/file_new.html", {
-                "course": course,
-                "form": form
-            })
-
-        # Only POST and GET allowed
+        # Validate the form data
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse("course", args=[course.id]))
         else:
-            return HttpResponseNotAllowed()    
-            
-    # Course doesn't exist in database
-    except Course.DoesNotExist:
-        return HttpResponseNotFound()
+            return render(request, "assistor/file_new.html", {
+            "message": "Failed to add file!",
+            "course": course,
+            "form": form
+        })
+
+    # Show the New File Form
+    elif request.method == "GET":
+        return render(request, "assistor/file_new.html", {
+            "course": course,
+            "form": form
+        })
+
+    # Only POST and GET allowed
+    else:
+        return HttpResponseNotAllowed()
 
 @login_required(login_url="login")
 def file_delete(request, course_id, file_id):
