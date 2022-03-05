@@ -489,8 +489,8 @@ def new_file(request, course_id):
 
         # Retreive course from database
         course = Course.objects.get(id=course_id)
-        
-        # Add new file
+
+        # Add the new file
         if request.method == "POST":
 
             # Assign form data from post
@@ -507,13 +507,18 @@ def new_file(request, course_id):
                 "course": course,
                 "form": form
             })
-            
-        # Show form for adding a new file
-        return render(request, "assistor/file_new.html", {
-            "course": course,
-            "form": form
-        })
 
+        # Show the New File Form
+        elif request.method == "GET":
+            return render(request, "assistor/file_new.html", {
+                "course": course,
+                "form": form
+            })
+
+        # Only POST and GET allowed
+        else:
+            return HttpResponseNotAllowed()    
+            
     # Course doesn't exist in database
     except Course.DoesNotExist:
         return HttpResponseNotFound()
