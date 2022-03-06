@@ -15,8 +15,7 @@ Reminder
         </div>
         <div>
             <a href="{% url 'reminder_delete' reminder.id %}"><button type="button" class="btn btn-link text-danger"><span class="material-icons-outlined fs-2">delete</span></button></a>
-            <!-- todo reminder edit url -->
-            <a href="#"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">edit</span></button></a>
+            <a href="{% url 'reminder_edit' reminder.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">edit</span></button></a>
         </div>
     </div>
 
