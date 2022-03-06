@@ -22,6 +22,7 @@ urlpatterns = [
     path("courses/<int:course_id>/files/<int:file_id>", views.file, name="file"),
     path("courses/<int:course_id>/files/<int:file_id>/edit", views.file_edit, name="file_edit"),
     path("courses/<int:course_id>/files/<int:file_id>/delete", views.file_delete, name="file_delete"),
+    path("courses/<int:course_id>/links/new", views.link_new, name="link_new"),
     path("reminders/new", views.new_reminder, name="reminder_new"),
     path("reminders/<int:id>/delete", views.reminder_delete, name="reminder_delete")
 ]

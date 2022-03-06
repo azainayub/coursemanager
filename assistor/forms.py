@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import EmailInput, PasswordInput, TextInput, DateInput
-from .models import Course, File, Note, Reminder, User
+from .models import Course, File, Note, Reminder, User, Link, Instructor
 
 class RegistrationForm(forms.ModelForm):
     error_css_class = 'text-danger'
@@ -55,6 +55,15 @@ class FileForm(forms.ModelForm):
                 "aria-label": ".form-select-sm"
                 }),
             "file": forms.FileInput(attrs={"class": "form-control form-control-sm"})
+        }
+
+class LinkForm(forms.ModelForm):
+    class Meta:
+        model = Link
+        fields = ["name", "url"]
+        widgets = {
+            "name": TextInput(attrs={"class": "form-control form-control-sm"}),
+            "url": forms.URLInput(attrs={"class": "form-control form-control-sm"})
         }
 
 class NewReminderForm(forms.ModelForm):

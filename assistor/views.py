@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
 from .models import Course, Note, Reminder, User, File, Instructor, Link
-from .forms import RegistrationForm, LoginForm, CourseForm, FileForm, NoteForm, NewReminderForm
+from .forms import RegistrationForm, LoginForm, CourseForm, FileForm, NoteForm, LinkForm, NewReminderForm
 
 # Create your views here.
 @login_required(login_url="login")
@@ -570,6 +570,55 @@ def file_edit(request, course_id, file_id):
     else:
         return HttpResponseNotAllowed()
 
+@login_required(login_url="login")
+def link_new(request, course_id):
+    """
+    Display the new link form :model:`assistor.Link`.
+
+    **Context**
+
+    ``course``
+        An instance of :model:`assistor.course`.
+    
+    ``link``
+        An instance of :form:`assistor.Link`.
+
+    ``form``
+        An instance of :form:`assistor.LinkForm`.
+        
+    **Template:**
+
+    :template:`assistor/link_new.html`
+    """
+
+    course = get_object_or_404(Course, id=course_id, user=request.user) 
+    link = Link(course=course)
+
+    # Add a new link
+    if request.method == "POST":
+        form = LinkForm(request.POST, instance=link)
+
+        # Check form is valid
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse("course", args=[course.id]))
+             
+        else:
+            return render(request, "assistor/link_new.html", {
+            "course": course,
+            "form": form
+        })
+
+    # Show the New Link Form
+    elif request.method == "GET":
+        return render(request, "assistor/link_new.html", {
+            "course": course,
+            "form": LinkForm()
+        })
+    
+    # Only GET and POST allowed
+    else:
+        return HttpResponseNotAllowed()
 
 @login_required(login_url="login")
 def file_delete(request, course_id, file_id):

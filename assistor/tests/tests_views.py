@@ -7,7 +7,8 @@ from django.urls import reverse
 from django.db.models import Max
 
 from assistor.views import index
-from assistor.models import Course, User, File
+from assistor.models import Course, User, File, Link
+from assistor.forms import LinkForm
 
 class RegistrationTestCase(TestCase):
     def test_user_registers_with_valid_data(self):
@@ -209,3 +210,33 @@ class EditFileTestCase(TestCase):
                 format='multipart/form-data')
         
         self.assertRedirects(response, reverse("file", args=[course.id, file.id]))
+
+class NewLinkTestCase(TestCase):
+    """Test the new link view"""
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        course = Course.objects.create(user=user, title="Human Computer Interaction")
+        user.save()
+        course.save()
+
+    def test_new_link_render(self):
+        """Check the new link form renders"""
+        self.client.login(username="admin", password="admin")
+        course = Course.objects.get(title="Human Computer Interaction")
+        response = self.client.get(reverse("link_new", args=[course.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context.get("course"), course)
+        self.assertIsInstance(response.context.get("form"), LinkForm)
+        self.assertTemplateUsed(response, "assistor/link_new.html")
+
+    def test_new_link_is_created(self):
+        """Check the new link is created"""
+        self.client.login(username="admin", password="admin")
+        course = Course.objects.get(title="Human Computer Interaction")
+        response = self.client.post(reverse("link_new", args=[course.id]), {
+            "name": "Test",
+            "url": "https://www.google.com/"
+        })
+        self.assertRedirects(response, reverse("course", args=[course.id]))
+        self.assertTrue(Link.objects.get(name="Test", course=course) != None)
