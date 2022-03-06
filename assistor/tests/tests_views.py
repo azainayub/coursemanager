@@ -1,5 +1,4 @@
 from datetime import date, datetime
-from urllib import response
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.db.models import Max
@@ -182,7 +181,7 @@ class EditFileTestCase(TestCase):
         self.assertEqual(response.context.get("file"), file)
         self.assertTemplateUsed("assistor/file_edit.html")
 
-    def test_file_is_edit(self):
+    def test_file_is_edited(self):
         """Check the file_edit view edits file"""
         self.client.login(username="admin", password="admin")
         course = Course.objects.get(title="Human Computer Interaction")
@@ -333,3 +332,33 @@ class ReminderTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context.get("reminder"), reminder)
         self.assertTemplateUsed(response, "assistor/reminder.html")
+
+class EditReminderTestCase(TestCase):
+    """Test the edit reminder view"""
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        user.save()
+        reminder = Reminder.objects.create(user=user, name="Test", time=datetime.now())
+        reminder.save()
+
+    def test_edit_reminder_renders(self):
+        """Check the edit reminder view renders"""
+        self.client.login(username="admin", password="admin")
+        reminder = Reminder.objects.get(name="Test")
+        response = self.client.get(reverse("reminder_edit", args=[reminder.id]))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed("assistor/reminder_edit.html")
+
+    def test_reminder_is_edited(self):
+        """Check the reminder edit view edits reminder"""
+        self.client.login(username="admin", password="admin")
+        reminder = Reminder.objects.get(name="Test")
+
+        response = self.client.post(reverse("reminder_edit", args=[reminder.id]), {
+            "name": "TestEdit", 
+            "time": datetime.now()
+        })
+        
+        self.assertRedirects(response, reverse("reminder", args=[reminder.id]))

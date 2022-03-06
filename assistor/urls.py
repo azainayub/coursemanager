@@ -27,5 +27,6 @@ urlpatterns = [
     path("reminders", views.reminders, name="reminders"),
     path("reminders/new", views.reminder_new, name="reminder_new"),
     path("reminders/<int:reminder_id>", views.reminder, name="reminder"),
+    path("reminders/<int:reminder_id>/edit", views.reminder_edit, name="reminder_edit"),
     path("reminders/<int:id>/delete", views.reminder_delete, name="reminder_delete")
 ]

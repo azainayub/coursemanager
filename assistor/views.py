@@ -463,6 +463,55 @@ def reminder(request, reminder_id):
     })
 
 @login_required(login_url="login")
+def reminder_edit(request, reminder_id):
+    """
+    Display the reminder editing form :model:`assistor.Reminder`.
+
+    **Context**
+
+    ``reminder``
+        An instance of :model:`assistor.Reminder`.
+
+    ``form``
+        An instance of :form:`assistor.ReminderForm`.
+        
+    **Template:**
+
+    :template:`assistor/reminder_edit.html`
+    """
+
+    # Retrieve object
+    reminder = get_object_or_404(Reminder, id=reminder_id, user=request.user)
+
+    # Edit the reminder
+    if request.method == "POST":
+        form = ReminderForm(request.POST, instance=reminder)
+
+        if form.is_valid():
+            reminder.name = form.cleaned_data["name"]
+            reminder.time = form.cleaned_data["time"]
+            reminder.save()
+            return HttpResponseRedirect(reverse("reminder", args=[reminder.id]))
+        else:
+            return render(request, "assistor/reminder_edit.html", {
+            "message": "Failed to edit reminder",
+            "reminder": reminder,
+            "form": ReminderForm(instance=reminder)
+        })
+
+    # Show the form to edit reminder
+    elif request.method == "GET":
+        return render(request, "assistor/reminder_edit.html", {
+            "reminder": reminder,
+            "form": ReminderForm(instance=reminder)
+        })
+
+    # Only GET and POST allowed
+    else:
+        return HttpResponseNotAllowed()
+
+
+@login_required(login_url="login")
 def reminder_delete(request, id):
     # Retreive reminder from database
     reminder = Reminder.objects.get(id=id)
