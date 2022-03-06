@@ -26,5 +26,6 @@ urlpatterns = [
     path("courses/<int:course_id>/instructors/new", views.instructor_new, name="instructor_new"),
     path("reminders", views.reminders, name="reminders"),
     path("reminders/new", views.reminder_new, name="reminder_new"),
+    path("reminders/<int:reminder_id>", views.reminder, name="reminder"),
     path("reminders/<int:id>/delete", views.reminder_delete, name="reminder_delete")
 ]

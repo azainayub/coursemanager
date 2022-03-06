@@ -1,0 +1,23 @@
+{% extends 'assistor/layout.html' %}
+{% load static %}
+
+{% block title %}
+Reminder
+{% endblock %}
+
+{% block main %}
+    {% include 'assistor/snippets/reminder_header_snippet.html' %}
+    <!-- Reminder -->
+    <div class="d-flex justify-content-between p-3 text-green bg-light-green">
+        <div class="">
+            <h3>{{ reminder.name }}</h3>
+            <p>You will be reminded on <strong>{{ reminder.time }}</strong> through email.</p>
+        </div>
+        <div>
+            <a href="{% url 'reminder_delete' reminder.id %}"><button type="button" class="btn btn-link text-danger"><span class="material-icons-outlined fs-2">delete</span></button></a>
+            <!-- todo reminder edit url -->
+            <a href="#"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">edit</span></button></a>
+        </div>
+    </div>
+
+{% endblock %}

@@ -444,6 +444,25 @@ def reminder_new(request):
         return HttpResponseNotAllowed()
 
 @login_required(login_url="login")
+def reminder(request, reminder_id):
+    """
+    Display the reminder :model:`assistor.Reminder`.
+
+    **Context**
+
+    ``reminder``
+        An instance of :model:`assistor.Reminder`.
+        
+    **Template:**
+
+    :template:`assistor/reminder.html`
+    """
+    reminder = get_object_or_404(Reminder, id=reminder_id, user=request.user)
+    return render(request, "assistor/reminder.html", {
+        "reminder": reminder
+    })
+
+@login_required(login_url="login")
 def reminder_delete(request, id):
     # Retreive reminder from database
     reminder = Reminder.objects.get(id=id)

@@ -31,7 +31,7 @@
                         <h5 class="card-title">{{ reminder.name }}</h5>
                         <p class="card-text">{{ reminder.time }}</p>
                         <!-- todo reminder url -->
-                        <a href="#" class="btn btn-primary">View</a>
+                        <a href="{% url 'reminder' reminder.id %}" class="btn btn-primary">View</a>
                     </div>
                 </div>
             </div>

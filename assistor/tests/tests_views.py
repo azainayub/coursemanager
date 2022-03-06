@@ -314,3 +314,22 @@ class NewReminderTestCase(TestCase):
         })
         self.assertRedirects(response, reverse("index"))
         self.assertTrue(Reminder.objects.get(name="Test") != None)
+
+class ReminderTestCase(TestCase):
+    """Test the reminder view"""
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        user.save()
+        reminder = Reminder.objects.create(user=user, name="Test", time=datetime.now())
+        reminder.save()
+
+    def test_reminder_renders(self):
+        """Check the reminder renders"""
+        self.client.login(username="admin", password="admin")
+        reminder = Reminder.objects.get(name="Test")
+        response = self.client.get(reverse("reminder", args=[reminder.id]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context.get("reminder"), reminder)
+        self.assertTemplateUsed(response, "assistor/reminder.html")
