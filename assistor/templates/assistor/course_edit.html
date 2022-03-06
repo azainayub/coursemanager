@@ -6,7 +6,7 @@ Edit Course
 
 {% block main %}
 <div class="container mt-5 mb-5">
-    <form class="row g-3 p-4 mx-auto shadow rounded" action="{% url 'course_edit' id %}" method="POST">
+    <form class="row g-3 p-4 mx-auto shadow rounded" action="{% url 'course_edit' course.id %}" method="POST">
         <h2>
             <span class="material-icons-outlined fs-2">
                 subject

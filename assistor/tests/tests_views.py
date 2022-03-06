@@ -203,6 +203,39 @@ class CourseTestCase(TestCase):
         response = c.get("/courses/" + str(Course.objects.get(title ="Human Computer Interaction").id))
         self.assertEquals(response.status_code, 404)
 
+class EditCourseTestCase(TestCase):
+    """Test the edit course view"""
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        user.save()
+        course = Course.objects.create(user=user, title="Information Security")
+        course.save()
+
+    def test_edit_course_renders(self):
+        """Check the edit course view renders"""
+        self.client.login(username="admin", password="admin")
+        course = Course.objects.get(title="Information Security")
+        response = self.client.get(reverse("course_edit", args=[course.id]))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed("assistor/reminder_edit.html")
+
+    def test_course_is_edited(self):
+        """Check the course edit view edits course"""
+        self.client.login(username="admin", password="admin")
+        course = Course.objects.get(title="Information Security")
+
+        response = self.client.post(reverse("course_edit", args=[course.id]), {
+            "title": "Data Science",
+            "start_date": date(2022, 7, 3),
+            "provider": "University XYZ"
+        })
+        
+        course = Course.objects.get(title="Data Science")
+        self.assertEqual(course.title, "Data Science")
+        self.assertRedirects(response, reverse("course", args=[course.id]))
+
 class NewFileViewTestCase(TestCase):
     """
     Test the new file view

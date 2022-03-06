@@ -238,48 +238,50 @@ def course(request, course_id):
     })
 
 @login_required(login_url="login")
-def course_edit(request, id):
+def course_edit(request, course_id):
     """
-    Edit a course
+    Display the course edit form :model:`assistor.Course`.
+
+    **Context**
+
+    ``form``
+        An instance of :form:`assistor.CourseForm`.
+
+    **Template:**
+
+    :template:`assistor/course_edit.html`
     """
-    form = CourseForm()
-    
+    course = get_object_or_404(Course, id=course_id, user=request.user)
+
     # Edit a course
     if request.method == "POST":
-        # Assign the form data from request
-        try:
-            course = Course.objects.get(id=id, user=request.user)
-            form = CourseForm(request.POST, instance=course)
+        
+        form = CourseForm(request.POST, instance=course)
 
-            # Validate the form data
-            if form.is_valid():
-                course.title = form.cleaned_data["title"]
-                course.start_date = form.cleaned_data["start_date"]
-                course.end_date = form.cleaned_data["completion_date"]
-                course.grade = form.cleaned_data["grade"]
-                course.provider = form.cleaned_data["provider"]
+        # Validate the form data
+        if form.is_valid():
+            course.title = form.cleaned_data["title"]
+            course.start_date = form.cleaned_data["start_date"]
+            course.completion_date = form.cleaned_data["completion_date"]
+            course.grade = form.cleaned_data["grade"]
+            course.provider = form.cleaned_data["provider"]
 
-                # Save the edited course
-                course.save()
-                return HttpResponseRedirect(reverse("course", args=[course.id]))
-
-        except Course.DoesNotExist:
-            return HttpResponseNotFound()
-
-    else:
-        try:
-            # Fill the form with course data
-            course = Course.objects.get(id=id, user=request.user)
-            form = CourseForm(instance=course)
-
-            # Show the form for editing course
+            # Save the edited course
+            course.save()
+            return HttpResponseRedirect(reverse("course", args=[course.id]))
+        else:
             return render(request, "assistor/course_edit.html", {
-                "id": id,
+                "course": course,
                 "form": form
             })
-
-        except Course.DoesNotExist:
-            return HttpResponseNotFound()
+    
+    # Show the course edit form
+    else:
+        # Show the form for editing course
+        return render(request, "assistor/course_edit.html", {
+            "course": course,
+            "form": CourseForm(instance=course)
+        })
 
 @login_required(login_url="login")
 def notes(request, course_id):
