@@ -1,10 +1,11 @@
 from datetime import date, datetime
+from turtle import title
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.db.models import Max
 
 from assistor.views import index
-from assistor.models import Course, User, File, Link, Instructor, Reminder
+from assistor.models import Course, User, File, Link, Instructor, Reminder, Note
 from assistor.forms import CourseForm, LinkForm, InstructorForm, ReminderForm
 
 class RegistrationTestCase(TestCase):
@@ -89,6 +90,7 @@ class HomeTestCase(TestCase):
             reminder.save()
         for i in range(12):
             course = Course.objects.create(user=user, title=f"TestCourse{i}")
+            course.save()
 
     def test_home_renders(self):
         """Check the home renders"""
@@ -108,6 +110,7 @@ class CoursesTestCase(TestCase):
         user.save()
         for i in range(12):
             course = Course.objects.create(user=user, title=f"TestCourse{i}")
+            course.save()
 
     def test_home_renders(self):
         """Check the home renders"""
@@ -118,6 +121,33 @@ class CoursesTestCase(TestCase):
         self.assertEqual(response.context.get("courses").count(), 12)
         self.assertTemplateUsed(response, "assistor/courses.html")
 
+class CourseTestCase(TestCase):
+    """Test the course view"""
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        user.save()
+        course = Course.objects.create(user=user, title="Test")
+        course.save()
+        for i in range(3):
+            note = Note.objects.create(course=course, title=f"Test{1}", content="Lorem Ipsum....")
+            note.save()
+            instructor = Instructor.objects.create(course=course, title=["DR"], first_name=f"Test{i}", last_name=f"Test{i}", email=f"test{i}@test.com")
+            instructor.save()
+            link = Link.objects.create(course=course, name=f"TestLink{i}", url="https://hello.com")
+            link.save()
+        
+    def test_course_renders(self):
+        """Check the course renders"""
+        self.client.login(username="admin", password="admin")
+        course = Course.objects.get(title="Test")
+        response = self.client.get(reverse("course", args=[course.id]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context.get("notes").count(), 3)
+        self.assertEqual(response.context.get("instructors").count(), 3)
+        self.assertEqual(response.context.get("links").count(), 3)
+        self.assertTemplateUsed(response, "assistor/course.html")
 
 class NewCourseTestCase(TestCase):
     """Test the new course view"""
