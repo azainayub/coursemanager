@@ -153,7 +153,18 @@ def register(request):
 
 @login_required(login_url="login")
 def course_new(request):
-    form = CourseForm()
+    """
+    Display the course form :model:`assistor.Course`.
+
+    **Context**
+
+    ``form``
+        An instance of :form:`assistor.CourseForm`.
+
+    **Template:**
+
+    :template:`assistor/course_new.html`
+    """
 
     # Add a new course
     if request.method == "POST":
@@ -170,9 +181,14 @@ def course_new(request):
             return HttpResponseRedirect(reverse("course", args=[course.id]))    
 
     # Show the form for adding course
-    return render(request, "assistor/course_new.html", {
-        "form": form
-    })
+    elif request.method == "GET":
+        return render(request, "assistor/course_new.html", {
+            "form": CourseForm()
+        })
+    
+    # Only GET and POST allowed
+    else:
+        return HttpResponseNotAllowed()
 
 
 @login_required(login_url="login")

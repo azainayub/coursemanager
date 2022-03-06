@@ -177,7 +177,7 @@ class NewCourseTestCase(TestCase):
         course = Course.objects.get(title="Information Security")
         self.assertRedirects(response, reverse("course", args=[course.id]))
 
-class CourseViewTestCase(TestCase):
+class CourseTestCase(TestCase):
     """
     Test the course view
     """
@@ -201,7 +201,7 @@ class CourseViewTestCase(TestCase):
         c = Client()
         c.login(username="admin", password="admin")
         response = c.get("/courses/" + str(Course.objects.get(title ="Human Computer Interaction").id))
-        self.assertEquals(response.status_code, 403)
+        self.assertEquals(response.status_code, 404)
 
 class NewFileViewTestCase(TestCase):
     """
