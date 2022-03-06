@@ -382,55 +382,51 @@ def note_new(request, course_id):
 @login_required(login_url="login")
 def note_edit(request, course_id, note_id):
     """
-    Edit a note
-    """ 
+    Display a edit note form :model:`assistor.Note`.
+
+    **Context**
+
+    ``course``
+        An instance of :model:`assistor.Course`.
+
+    ``form``
+        An instance of :form:`assistor.NoteForm`.
+        
+    **Template:**
+
+    :template:`assistor/note_edit.html`
+    """
+    course = get_object_or_404(Course, id=course_id, user=request.user)
+    note = get_object_or_404(Note, id=note_id, course=course)
+
+    # Edit the note
     if request.method == "POST":
-        try:
-            course = Course.objects.get(id=course_id)
-            note = Note.objects.get(id=note_id)
+        form = NoteForm(request.POST, instance=note)
+        if form.is_valid():
+            note.title = form.cleaned_data["title"]
+            note.content = form.cleaned_data["content"]
+            note.save()
+            return HttpResponseRedirect(reverse("note", args=[course.id, note.id]))
+        else:
+            return render(request, "assistor/note_edit.html", {
+                "message": "Failed to edit note!",
+                "course": course,
+                "note": note,
+                "form": NoteForm(instance=note)
+            })
 
-            # Prevent unauthorised user from accessing note editing form
-            if request.user == course.user:
-                form = NoteForm(request.POST, instance=note)
-                if form.is_valid():
-                    note.title = form.cleaned_data["title"]
-                    note.content = form.cleaned_data["content"]
-                    note.save()
-                    return HttpResponseRedirect(reverse("note", args=[course.id, note.id]))
-                else:
-                    form = NoteForm(instance=note)
-                    return render(request, "assistor/note_edit.html", {
-                        "course": course,
-                        "note": note,
-                        "form": form
-                    })
-            else:
-                return HttpResponseForbidden()
+    # Show the Note Editing Form
+    elif request.method == "GET":
+        return render(request, "assistor/note_edit.html", {
+            "course": course,
+            "note": note,
+            "form": NoteForm(instance=note)
+        })
 
-        except (Course.DoesNotExist, Note.DoesNotExist):
-            return HttpResponseNotFound()
-
+    # Only GET and POST allowed
     else:
-        try:
-            course = Course.objects.get(id=course_id)
-            note = Note.objects.get(id=note_id)
-
-            # Prevent unauthorised user from accessing note editing form
-            if request.user == course.user:
-                form = NoteForm(instance=note)
-                return render(request, "assistor/note_edit.html", {
-                    "course": course,
-                    "note": note,
-                    "form": form
-                })
-
-            else:
-                return HttpResponseForbidden()
-
-        except (Course.DoesNotExist, Note.DoesNotExist):
-            return HttpResponseNotFound()
-
-
+        return HttpResponseNotAllowed()
+        
 @login_required(login_url="login")
 def files(request, course_id):
     """

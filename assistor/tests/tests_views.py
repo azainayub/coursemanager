@@ -311,6 +311,45 @@ class NewNoteTestCase(TestCase):
         note = Note.objects.get(title="Lorem Ipsum")
         self.assertRedirects(response, reverse("note", args=[course.id, note.id]))
 
+class EditNoteTestCase(TestCase):
+    """Test the edit note view"""
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        course = Course.objects.create(user=user, title="Information Security")
+        note = Note.objects.create(course=course, title="Lorem Ipsum", content="Lorem Ipsum sit amet........")
+        note.save()
+        user.save()
+        course.save()
+
+    def test_edit_note_renders(self):
+        """Check the edit note view renders"""
+        self.client.login(username="admin", password="admin")
+
+        course = Course.objects.get(title="Information Security")
+        note = Note.objects.get(title="Lorem Ipsum")
+
+        response = self.client.get(reverse("note_edit", args=[course.id, note.id]))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context.get("course"), course)
+        self.assertEqual(response.context.get("note"), note)
+        self.assertTemplateUsed("assistor/note_edit.html")
+
+    def test_note_is_edited(self):
+        """Check the note edit view edits note"""
+        self.client.login(username="admin", password="admin")
+        
+        course = Course.objects.get(title="Information Security")
+        note = Note.objects.get(title="Lorem Ipsum")
+
+        response = self.client.post(reverse("note_edit", args=[course.id, note.id]), {
+                "title": "Lorem Ipsum Test Edit", 
+                "content": "Lorem Ipsum Test Edit Content"
+            })
+        
+        self.assertRedirects(response, reverse("note", args=[course.id, note.id]))
+
 class NewFileViewTestCase(TestCase):
     """
     Test the new file view
