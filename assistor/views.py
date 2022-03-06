@@ -293,8 +293,8 @@ def notes(request, course_id):
     ``course``
         An instance of :model:`assistor.Course`.
 
-    ``form``
-        An instance of :form:`assistor.NoteForm`.
+    ``course``
+        An instance of :model:`assistor.Note`.
         
     **Template:**
 
@@ -426,13 +426,25 @@ def note_edit(request, course_id, note_id):
     # Only GET and POST allowed
     else:
         return HttpResponseNotAllowed()
-        
+
 @login_required(login_url="login")
 def files(request, course_id):
     """
-    Show all files of a course
+    Display the files :model:`assistor.File`.
+
+    **Context**
+
+    ``course``
+        An instance of :model:`assistor.Course`.
+    
+    ``files``
+        An instance of :model:`assistor.File`.
+        
+    **Template:**
+
+    :template:`assistor/files.html`
     """
-    course = Course.objects.get(id=course_id)
+    course = get_object_or_404(Course, id=course_id, user=request.user)
     return render(request, "assistor/files.html", {
         "course": course,
         "files": File.objects.filter(course=course)
