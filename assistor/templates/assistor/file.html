@@ -40,9 +40,8 @@
                 <h3 class="text-orange">{{ file.name }}</h3>
             </div>
             <div>
-                <!-- to do file edit url -->
                 <a href="{% url 'file_delete' course.id file.id %}"><button type="button" class="btn btn-link text-danger"><span class="material-icons-outlined fs-2">delete</span></button></a>
-                <a href="#"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">edit</span></button></a>
+                <a href="{% url 'file_edit' course.id file.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">edit</span></button></a>
             </div>
         </div>
 
