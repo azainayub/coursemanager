@@ -453,15 +453,27 @@ def files(request, course_id):
 @login_required(login_url="login")
 def file(request, course_id, file_id):
     """
-    Show a file
+    Display a file :model:`assistor.File`.
+
+    **Context**
+
+    ``course``
+        An instance of :model:`assistor.Course`.
+    
+    ``files``
+        An instance of :model:`assistor.File`.
+        
+    **Template:**
+
+    :template:`assistor/files.html`
     """
-    try:
-        return render(request, 'assistor/file.html', {
-            "course": Course.objects.get(id=course_id),
-            "file": File.objects.get(id=file_id)
-        })
-    except (Course.DoesNotExist, File.DoesNotExist):
-        return HttpResponseNotFound()
+    course = get_object_or_404(Course, id=course_id, user=request.user)
+    file = get_object_or_404(File, id=file_id, course=course)
+    
+    return render(request, 'assistor/file.html', {
+        "course": course,
+        "file": file
+    })
 
 @login_required(login_url="login")
 def course_delete(request, id):

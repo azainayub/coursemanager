@@ -372,6 +372,28 @@ class FilesTestCase(TestCase):
         self.assertEqual(response.context.get("files").count(), 15)
         self.assertTemplateUsed(response, "assistor/files.html")
 
+class FileTestCase(TestCase):
+    """Test the file view"""
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        user.save()
+        course = Course.objects.create(user=user, title="Information Security")
+        course.save()
+        file = File.objects.create(course=course, name="TestFile", category=["AS"], file="assistor/templates/assistor/index.html")
+        file.save()
+
+    def test_file_renders(self):
+        """Check the file renders"""
+        self.client.login(username="admin", password="admin")
+        course = Course.objects.get(title="Information Security")
+        file = File.objects.get(name="TestFile")
+        response = self.client.get(reverse("file", args=[course.id, file.id]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context.get("file"), file)
+        self.assertTemplateUsed(response, "assistor/file.html")
+
 class NewFileViewTestCase(TestCase):
     """
     Test the new file view
