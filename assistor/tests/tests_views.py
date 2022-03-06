@@ -259,6 +259,28 @@ class NotesTestCase(TestCase):
         self.assertEqual(response.context.get("notes").count(), 15)
         self.assertTemplateUsed(response, "assistor/notes.html")
 
+class NoteTestCase(TestCase):
+    """Test the note view"""
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        user.save()
+        course = Course.objects.create(user=user, title="Information Security")
+        course.save()
+        note = Note.objects.create(course=course, title="Lorem Ipsum", content="Lorem Ipsum sit amet........")
+        note.save()
+
+    def test_note_renders(self):
+        """Check the note renders"""
+        self.client.login(username="admin", password="admin")
+        course = Course.objects.get(title="Information Security")
+        note = Note.objects.get(title="Lorem Ipsum")
+        response = self.client.get(reverse("note", args=[course.id, note.id]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context.get("note"), note)
+        self.assertTemplateUsed(response, "assistor/note.html")
+
 class NewFileViewTestCase(TestCase):
     """
     Test the new file view

@@ -308,27 +308,29 @@ def notes(request, course_id):
 
 @login_required(login_url="login")
 def note(request, course_id, note_id):
-    try:
-        # Retreive note and course from database
-        course = Course.objects.get(id=course_id)
-        note = Note.objects.get(id=note_id, course=course)
+    """
+    Display a note :model:`assistor.Note`.
 
-        # Allow only the note creator to access
-        if note.course.user == request.user:
-            
-            # Show the note
-            return render(request, "assistor/note.html", {
-                "course" : Course.objects.get(id=course_id),
-                "note" : note
-            })
+    **Context**
 
-        # Deny access to unauthorized user
-        else:
-            return HttpResponseForbidden()
+    ``course``
+        An instance of :model:`assistor.Course`.
 
-    # Note with note_id doesn't exist
-    except (Note.DoesNotExist, Course.DoesNotExist):
-        return HttpResponseNotFound()
+    ``note``
+        An instance of :form:`assistor.Note`.
+        
+    **Template:**
+
+    :template:`assistor/note.html`
+    """
+    course = get_object_or_404(Course, id=course_id, user=request.user)
+    note = get_object_or_404(Note, id=note_id, course=course)
+        
+    # Show the note
+    return render(request, "assistor/note.html", {
+        "course" : course,
+        "note" : note
+    })
 
 @login_required(login_url="login")
 def note_new(request, course_id):
