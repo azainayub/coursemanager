@@ -519,6 +519,59 @@ def new_file(request, course_id):
         return HttpResponseNotAllowed()
 
 @login_required(login_url="login")
+def file_edit(request, course_id, file_id):
+    """
+    Display the file editing form :model:`assistor.File`.
+
+    **Context**
+
+    ``course``
+        An instance of :model:`assistor.course`.
+
+    ``form``
+        An instance of :form:`assistor.FileForm`.
+        
+    **Template:**
+
+    :template:`assistor/file_edit.html`
+    """
+
+    # Retrieve objects
+    course = get_object_or_404(Course, id=course_id, user=request.user)
+    file = get_object_or_404(File, id=file_id, course=course)
+
+    # Edit the file
+    if request.method == "POST":
+        form = FileForm(request.POST, request.FILES, instance=file)
+
+        if form.is_valid():
+            file.name = form.cleaned_data["name"]
+            file.category = form.cleaned_data["category"]
+            file.file = form.cleaned_data["file"]
+            file.save()
+            return HttpResponseRedirect(reverse("file", args=[course.id, file.id]))
+        else:
+            return render(request, "assistor/file_edit.html", {
+            "message": "Failed to edit file!",
+            "course": course,
+            "file": file,
+            "form": FileForm(instance=file)
+        })
+
+    # Show the form to edit file
+    elif request.method == "GET":
+        return render(request, "assistor/file_edit.html", {
+            "course": course,
+            "file": file,
+            "form": FileForm(instance=file)
+        })
+
+    # Only GET and POST allowed
+    else:
+        return HttpResponseNotAllowed()
+
+
+@login_required(login_url="login")
 def file_delete(request, course_id, file_id):
     try:
         # Retreive file from the database

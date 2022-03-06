@@ -1,5 +1,5 @@
 from turtle import title
-from unicodedata import category
+from unicodedata import category, name
 from urllib import response
 from django.test import TestCase, Client
 from django.contrib.auth import login
@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.db.models import Max
 
 from assistor.views import index
-from assistor.models import Course, User
+from assistor.models import Course, User, File
 
 class RegistrationTestCase(TestCase):
     def test_user_registers_with_valid_data(self):
@@ -144,10 +144,68 @@ class NewFileViewTestCase(TestCase):
         self.client.login(username="admin", password="admin")
         course = Course.objects.get(title="Human Computer Interaction")
         with open("assistor/templates/assistor/index.html") as tf:
-            response = self.client.post(reverse("file_new", args={course.id}), {
+            response = self.client.post(reverse("file_new", args=[course.id]), {
                 "name": "TestFile", 
                 "category": ['AS'],
                 "file": tf
             }, 
             format='multipart/form-data')
         self.assertRedirects(response, reverse("course", args={course.id}))
+
+class EditFileTestCase(TestCase):
+    """Test the edit file view"""
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        course = Course.objects.create(user=user, title="Human Computer Interaction")
+        user.save()
+        course.save()
+
+    def test_edit_file_renders(self):
+        """Check the edit file view renders"""
+        self.client.login(username="admin", password="admin")
+        course = Course.objects.get(title="Human Computer Interaction")
+
+        # Adding the file
+        with open("assistor/templates/assistor/index.html") as tf:
+            self.client.post(reverse("file_new", args=[course.id]), {
+                "name": "TestFile", 
+                "category": ['AS'],
+                "file": tf
+            }, 
+            format='multipart/form-data')
+
+        file = File.objects.get(name="TestFile")
+        response = self.client.get(reverse("file_edit", args=[course.id, file.id]))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context.get("course"), course)
+        self.assertEqual(response.context.get("file"), file)
+        self.assertTemplateUsed("assistor/file_edit.html")
+
+    def test_file_is_edit(self):
+        """Check the file_edit view edits file"""
+        self.client.login(username="admin", password="admin")
+        course = Course.objects.get(title="Human Computer Interaction")
+
+        # Adding the file
+        with open("assistor/templates/assistor/index.html") as tf:
+            self.client.post(reverse("file_new", args=[course.id]), {
+                "name": "TestFile", 
+                "category": ['AS'],
+                "file": tf
+            }, 
+            format='multipart/form-data')
+        
+        file = File.objects.get(name="TestFile")
+
+        # Edit the file
+        with open("assistor/templates/assistor/index.html") as tf:
+            response = self.client.post(reverse("file_edit", args=[course.id, file.id]), {
+                    "name": "TestFileEdit", 
+                    "category": ['AS'],
+                    "file": tf
+                }, 
+                format='multipart/form-data')
+        
+        self.assertRedirects(response, reverse("file", args=[course.id, file.id]))
