@@ -286,9 +286,21 @@ def course_edit(request, course_id):
 @login_required(login_url="login")
 def notes(request, course_id):
     """
-    Display all notes of the course
+    Display the notes :model:`assistor.Note`.
+
+    **Context**
+
+    ``course``
+        An instance of :model:`assistor.Course`.
+
+    ``form``
+        An instance of :form:`assistor.NoteForm`.
+        
+    **Template:**
+
+    :template:`assistor/notes.html`
     """
-    course = Course.objects.get(id=course_id)
+    course = get_object_or_404(Course, id=course_id, user=request.user)
     return render(request, "assistor/notes.html", {
         "course": course,
         "notes": course.notes.all()
@@ -653,7 +665,7 @@ def file_edit(request, course_id, file_id):
     **Context**
 
     ``course``
-        An instance of :model:`assistor.course`.
+        An instance of :model:`assistor.Course`.
 
     ``form``
         An instance of :form:`assistor.FileForm`.

@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from turtle import title
+from unicodedata import name
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.db.models import Max
@@ -235,6 +236,28 @@ class EditCourseTestCase(TestCase):
         course = Course.objects.get(title="Data Science")
         self.assertEqual(course.title, "Data Science")
         self.assertRedirects(response, reverse("course", args=[course.id]))
+
+class NotesTestCase(TestCase):
+    """Test the notes view"""
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        user.save()
+        course = Course.objects.create(user=user, title="Information Security")
+        course.save()
+        for i in range(15):
+            note = Note.objects.create(course=course, title=f"Test{i}", content=f"Lorem Ipsum{i}")
+            note.save()
+
+    def test_notes_render(self):
+        """Check the notes render"""
+        self.client.login(username="admin", password="admin")
+        course = Course.objects.get(title="Information Security")
+        response = self.client.get(reverse("notes", args=[course.id]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context.get("notes").count(), 15)
+        self.assertTemplateUsed(response, "assistor/notes.html")
 
 class NewFileViewTestCase(TestCase):
     """
