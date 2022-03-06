@@ -185,30 +185,41 @@ def courses(request):
     })
 
 @login_required(login_url="login")
-def course(request, id):
-    try:
-        # Retreive course from database
-        course = Course.objects.get(id=id)
+def course(request, course_id):
+    """
+    Display the course :model:`assistor.Course`.
 
-        # Allow only the course creator to access
-        if course.user == request.user:
+    **Context**
 
-            # Show the course
-            return render(request, "assistor/course.html", {
-                "course": course,
-                "notes": Note.objects.filter(course=course)[:4],
-                "files": File.objects.filter(course=course)[:4],
-                "instructors": Instructor.objects.filter(course=course),
-                "links": Link.objects.filter(course=course)
-            })
-        
-        # Deny access to unauthorized user
-        else:
-            return HttpResponseForbidden()
+    ``course``
+        An instance of :model:`assistor.Course`.
     
-    # Course with id does not exist
-    except Course.DoesNotExist:
-        return HttpResponseNotFound()
+    ``notes``
+        An instance of :model:`assistor.Notes`.
+
+    ``files``
+        An instance of :model:`assistor.File`.
+
+    ``instructors``
+    An instance of :model:`assistor.Instructor`.
+    
+    ``links``
+    An instance of :model:`assistor.Link`.
+
+    **Template:**
+
+    :template:`assistor/course.html`
+    """
+    course = get_object_or_404(Course, id=course_id, user=request.user)
+
+    # Show the course
+    return render(request, "assistor/course.html", {
+        "course": course,
+        "notes": Note.objects.filter(course=course)[:4],
+        "files": File.objects.filter(course=course)[:4],
+        "instructors": Instructor.objects.filter(course=course),
+        "links": Link.objects.filter(course=course)
+    })
 
 @login_required(login_url="login")
 def course_edit(request, id):
