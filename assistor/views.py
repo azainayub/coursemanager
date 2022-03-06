@@ -334,41 +334,50 @@ def note(request, course_id, note_id):
 
 @login_required(login_url="login")
 def note_new(request, course_id):
-    form = NoteForm()
-    try:
-        # Retreive course from database
-        course = Course.objects.get(id = course_id)
+    """
+    Display a new note form :model:`assistor.Note`.
 
-        # Allow only the course creator to add and see note
-        if course.user == request.user:
+    **Context**
 
-            # Add new Note
-            if request.method == "POST":
-                
-                # Assign form data from post
-                note = Note(course=course)
-                form = NoteForm(request.POST, instance=note)
+    ``course``
+        An instance of :model:`assistor.Course`.
 
-                # Validate form data
-                if form.is_valid():
-                    form.save()
-
-                    # Show the note
-                    return HttpResponseRedirect(reverse("note", args=[course_id, note.id]))
-            
-            # Show the form for adding new note
-            return render(request, "assistor/note_new.html", {
-                "course": course,
-                "form": form
-            })
+    ``form``
+        An instance of :form:`assistor.NoteForm`.
         
-        # Deny access to unauthorized user
-        else:
-            return HttpResponseForbidden()
+    **Template:**
+
+    :template:`assistor/note_new.html`
+    """
+    course = get_object_or_404(Course, id=course_id, user=request.user)
+    # Retreive course from database
+    course = Course.objects.get(id = course_id)
+
+    # Add new Note
+    if request.method == "POST":
+        
+        # Assign form data from post
+        note = Note(course=course)
+        form = NoteForm(request.POST, instance=note)
+
+        # Validate form data
+        if form.is_valid():
+            form.save()
+
+            # Show the note
+            return HttpResponseRedirect(reverse("note", args=[course_id, note.id]))
     
-    # Course doesn't exist in database
-    except Course.DoesNotExist:
-        return HttpResponseNotFound()
+    # Show the form for adding new note
+    elif request.method == "GET":   
+        return render(request, "assistor/note_new.html", {
+            "course": course,
+            "form": NoteForm()
+        })
+
+    # Only GET and POST allowed
+    else:
+        return HttpResponseNotAllowed()
+    
 
 @login_required(login_url="login")
 def note_edit(request, course_id, note_id):

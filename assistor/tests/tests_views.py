@@ -7,7 +7,7 @@ from django.db.models import Max
 
 from assistor.views import index
 from assistor.models import Course, User, File, Link, Instructor, Reminder, Note
-from assistor.forms import CourseForm, LinkForm, InstructorForm, ReminderForm
+from assistor.forms import CourseForm, LinkForm, InstructorForm, ReminderForm, NoteForm, FileForm, LoginForm, RegistrationForm
 
 class RegistrationTestCase(TestCase):
     def test_user_registers_with_valid_data(self):
@@ -280,6 +280,36 @@ class NoteTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context.get("note"), note)
         self.assertTemplateUsed(response, "assistor/note.html")
+
+class NewNoteTestCase(TestCase):
+    """Test the new note view"""
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        course = Course.objects.create(user=user, title="Information Security")
+        user.save()
+        course.save()
+
+    def test_new_note_render(self):
+        """Check the new note form renders"""
+        self.client.login(username="admin", password="admin")
+        course = Course.objects.get(title="Information Security")
+        response = self.client.get(reverse("note_new", args=[course.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context.get("course"), course)
+        self.assertIsInstance(response.context.get("form"), NoteForm)
+        self.assertTemplateUsed(response, "assistor/note_new.html")
+
+    def test_new_note_is_created(self):
+        """Check the new note is created"""
+        self.client.login(username="admin", password="admin")
+        course = Course.objects.get(title="Information Security")
+        response = self.client.post(reverse("note_new", args=[course.id]), {
+            "title": "Lorem Ipsum",
+            "content": "Lorem IpsumLorem IpsumLorem IpsumLorem IpsumLorem IpsumLorem IpsumLorem Ipsum"
+        })
+        note = Note.objects.get(title="Lorem Ipsum")
+        self.assertRedirects(response, reverse("note", args=[course.id, note.id]))
 
 class NewFileViewTestCase(TestCase):
     """
