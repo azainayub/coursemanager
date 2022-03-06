@@ -138,7 +138,7 @@ def register(request):
         return HttpResponseNotAllowed()
 
 @login_required(login_url="login")
-def new_course(request):
+def course_new(request):
     form = CourseForm()
 
     # Add a new course
