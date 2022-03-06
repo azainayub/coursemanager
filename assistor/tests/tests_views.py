@@ -100,6 +100,25 @@ class HomeTestCase(TestCase):
         self.assertEqual(response.context.get("reminders").count(), 4)
         self.assertTemplateUsed(response, "assistor/index.html")
 
+class CoursesTestCase(TestCase):
+    """Test the courses view"""
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        user.save()
+        for i in range(12):
+            course = Course.objects.create(user=user, title=f"TestCourse{i}")
+
+    def test_home_renders(self):
+        """Check the home renders"""
+        self.client.login(username="admin", password="admin")
+        response = self.client.get(reverse("courses"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context.get("courses").count(), 12)
+        self.assertTemplateUsed(response, "assistor/courses.html")
+
+
 class NewCourseTestCase(TestCase):
     """Test the new course view"""
     def setUp(self):
