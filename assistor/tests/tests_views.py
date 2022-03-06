@@ -7,8 +7,8 @@ from django.urls import reverse
 from django.db.models import Max
 
 from assistor.views import index
-from assistor.models import Course, User, File, Link
-from assistor.forms import LinkForm
+from assistor.models import Course, User, File, Link, Instructor
+from assistor.forms import LinkForm, InstructorForm
 
 class RegistrationTestCase(TestCase):
     def test_user_registers_with_valid_data(self):
@@ -240,3 +240,35 @@ class NewLinkTestCase(TestCase):
         })
         self.assertRedirects(response, reverse("course", args=[course.id]))
         self.assertTrue(Link.objects.get(name="Test", course=course) != None)
+
+class NewInstructorTestCase(TestCase):
+    """Test the new instructor view"""
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        course = Course.objects.create(user=user, title="Human Computer Interaction")
+        user.save()
+        course.save()
+
+    def test_new_instructor_render(self):
+        """Check the new instructor form renders"""
+        self.client.login(username="admin", password="admin")
+        course = Course.objects.get(title="Human Computer Interaction")
+        response = self.client.get(reverse("instructor_new", args=[course.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context.get("course"), course)
+        self.assertIsInstance(response.context.get("form"), InstructorForm)
+        self.assertTemplateUsed(response, "assistor/instructor_new.html")
+
+    def test_new_instructor_is_created(self):
+        """Check the new instructor is created"""
+        self.client.login(username="admin", password="admin")
+        course = Course.objects.get(title="Human Computer Interaction")
+        response = self.client.post(reverse("instructor_new", args=[course.id]), {
+            "title": ["DR"],
+            "first_name": "Hello",
+            "last_name": "World",
+            "email": "hello@world.com"
+        })
+        self.assertRedirects(response, reverse("course", args=[course.id]))
+        self.assertTrue(Instructor.objects.get(email="hello@world.com", course=course) != None)

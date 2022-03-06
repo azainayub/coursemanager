@@ -66,6 +66,20 @@ class LinkForm(forms.ModelForm):
             "url": forms.URLInput(attrs={"class": "form-control form-control-sm"})
         }
 
+class InstructorForm(forms.ModelForm):
+    class Meta:
+        model = Instructor
+        fields = ["title", "first_name", "last_name", "email"]
+        widgets = {
+            "title": forms.Select(attrs={
+                "class": "form-select form-select-sm",
+                "aria-label": ".form-select-sm"
+                }),
+            "first_name": forms.TextInput(attrs={"class": "form-control form-control-sm"}),
+            "last_name": forms.TextInput(attrs={"class": "form-control form-control-sm"}),
+            "email": forms.EmailInput(attrs={"class": "form-control form-control-sm"}),
+        }
+
 class NewReminderForm(forms.ModelForm):
     class Meta:
         model = Reminder
