@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from urllib import response
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -6,7 +6,7 @@ from django.db.models import Max
 
 from assistor.views import index
 from assistor.models import Course, User, File, Link, Instructor, Reminder
-from assistor.forms import LinkForm, InstructorForm
+from assistor.forms import LinkForm, InstructorForm, ReminderForm
 
 class RegistrationTestCase(TestCase):
     def test_user_registers_with_valid_data(self):
@@ -289,3 +289,28 @@ class RemindersTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context.get("reminders").count(), 12)
         self.assertTemplateUsed("assistor/reminders.html")
+
+class NewReminderTestCase(TestCase):
+    """Test the new reminder view"""
+    def setUp(Self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        user.save()
+
+    def test_new_reminder_renders(self):
+        """Check the new reminder view renders"""
+        self.client.login(username="admin", password="admin")
+        response = self.client.get(reverse("reminder_new"))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.context.get("form"), ReminderForm)
+        self.assertTemplateUsed(response, "assistor/reminder_new.html")
+
+    def test_new_reminder_is_created(self):
+        """Check the new reminder is created"""
+        self.client.login(username="admin", password="admin")
+        response = self.client.post(reverse("reminder_new"), {
+            "name": "Test",
+            "time": datetime.now()
+        })
+        self.assertRedirects(response, reverse("index"))
+        self.assertTrue(Reminder.objects.get(name="Test") != None)

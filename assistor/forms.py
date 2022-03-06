@@ -29,8 +29,8 @@ class CourseForm(forms.ModelForm):
         fields = ["title", "start_date", "completion_date", "grade", "provider"]
         widgets = {
             "title": TextInput(attrs={"class": "form-control form-control-sm"}),
-            "start_date": DateInput(attrs={"class": "form-control form-control-sm"}),
-            "completion_date": DateInput(attrs={"class": "form-control form-control-sm"}),
+            "start_date": DateInput(attrs={"class": "form-control form-control-sm", "type": "datetime-local"}),
+            "completion_date": DateInput(attrs={"class": "form-control form-control-sm", "type": "datetime-local"}),
             "grade": TextInput(attrs={"class": "form-control form-control-sm"}),
             "provider": TextInput(attrs={"class": "form-control form-control-sm"})
         }
@@ -80,14 +80,11 @@ class InstructorForm(forms.ModelForm):
             "email": forms.EmailInput(attrs={"class": "form-control form-control-sm"}),
         }
 
-class NewReminderForm(forms.ModelForm):
+class ReminderForm(forms.ModelForm):
     class Meta:
         model = Reminder
         fields = ["name", "time"]
-        labels = {
-            "name": "Name",
-            "time": "Time"
-        }
         widgets = {
-            "time": forms.DateTimeInput(attrs={"type": "datetime-local"})
+            "name": forms.TextInput(attrs={"class": "form-control form-control-sm"}),
+            "time": forms.DateTimeInput(attrs={"class": "form-control form-control-sm", "type": "datetime-local"})
         }

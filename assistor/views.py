@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
 from .models import Course, Note, Reminder, User, File, Instructor, Link
-from .forms import RegistrationForm, LoginForm, CourseForm, FileForm, NoteForm, LinkForm, InstructorForm, NewReminderForm
+from .forms import RegistrationForm, LoginForm, CourseForm, FileForm, NoteForm, LinkForm, InstructorForm, ReminderForm
 
 # Create your views here.
 @login_required(login_url="login")
@@ -407,25 +407,41 @@ def course_delete(request, id):
         return HttpResponseForbidden()
 
 @login_required(login_url="login")
-def new_reminder(request):
-    form = NewReminderForm()
+def reminder_new(request):
+    """
+    Display the reminder form :model:`assistor.Reminder`.
 
+    **Context**
+
+    ``form``
+        An instance of :form:`assistor.ReminderForm`.
+        
+    **Template:**
+
+    :template:`assistor/reminder_new.html`
+    """
     # Add a new reminder
     if request.method == "POST":
 
         # Assign the form data from post
         reminder = Reminder(user=request.user)
-        form = NewReminderForm(request.POST, instance=reminder)
+        form = ReminderForm(request.POST, instance=reminder)
 
         # Validate the form data
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse("index"))
 
+
     # Show form for adding new reminder
-    return render(request, "assistor/reminder_new.html", {
-        "form": form
-    })
+    elif request.method == "GET":
+        return render(request, "assistor/reminder_new.html", {
+            "form": ReminderForm()
+        })
+    
+    # Only GET and POST allowed
+    else:
+        return HttpResponseNotAllowed()
 
 @login_required(login_url="login")
 def reminder_delete(request, id):
