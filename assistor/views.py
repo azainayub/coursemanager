@@ -13,7 +13,21 @@ from .forms import RegistrationForm, LoginForm, CourseForm, FileForm, NoteForm, 
 # Create your views here.
 @login_required(login_url="login")
 def index(request):
-    # Default page number
+    """
+    Display the Home Page :model:`assistor.Course`.
+
+    **Context**
+
+    ``courses``
+        An instance of :models:`assistor.Course`.
+
+    ``reminders``
+        An instance of :models:`assistor.Reminders`.
+
+    **Template:**
+
+    :template:`assistor/index.html`
+    """
     return render(request, "assistor/index.html", {
         "courses": request.user.courses.all()[:4],
         "reminders": request.user.reminders.all()[:4]

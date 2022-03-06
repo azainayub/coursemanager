@@ -78,6 +78,28 @@ class LoginViewTestCase(TestCase):
         response = c.post("/login", {"username": "azainayub", "password": "abc"})
         self.assertEquals(response.context.get("message"), "Failed to login!")
 
+class HomeTestCase(TestCase):
+    """Test the home view"""
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        user.save()
+        for i in range(12):
+            reminder = Reminder.objects.create(user=user, name="Test", time=datetime.now())
+            reminder.save()
+        for i in range(12):
+            course = Course.objects.create(user=user, title=f"TestCourse{i}")
+
+    def test_home_renders(self):
+        """Check the home renders"""
+        self.client.login(username="admin", password="admin")
+        response = self.client.get(reverse("index"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context.get("courses").count(), 4)
+        self.assertEqual(response.context.get("reminders").count(), 4)
+        self.assertTemplateUsed(response, "assistor/index.html")
+
 class NewCourseTestCase(TestCase):
     """Test the new course view"""
     def setUp(self):
