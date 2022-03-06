@@ -671,6 +671,24 @@ def instructor_new(request, course_id):
         return HttpResponseNotAllowed()
 
 @login_required(login_url="login")
+def reminders(request):
+    """
+    Display the reminders :model:`assistor.Reminder`.
+
+    **Context**
+
+    ``courses``
+        An instance of :Objects:`assistor.Course`.
+        
+    **Template:**
+
+    :template:`assistor/reminders.html`
+    """
+    return render(request, "assistor/reminders.html", {
+        "reminders": request.user.reminders.all()
+    })
+
+@login_required(login_url="login")
 def file_delete(request, course_id, file_id):
     try:
         # Retreive file from the database

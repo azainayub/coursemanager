@@ -1,13 +1,11 @@
-from turtle import title
-from unicodedata import category, name
+from datetime import datetime
 from urllib import response
 from django.test import TestCase, Client
-from django.contrib.auth import login
 from django.urls import reverse
 from django.db.models import Max
 
 from assistor.views import index
-from assistor.models import Course, User, File, Link, Instructor
+from assistor.models import Course, User, File, Link, Instructor, Reminder
 from assistor.forms import LinkForm, InstructorForm
 
 class RegistrationTestCase(TestCase):
@@ -272,3 +270,22 @@ class NewInstructorTestCase(TestCase):
         })
         self.assertRedirects(response, reverse("course", args=[course.id]))
         self.assertTrue(Instructor.objects.get(email="hello@world.com", course=course) != None)
+
+class RemindersTestCase(TestCase):
+    """Test the reminders view"""
+    def setUp(Self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        user.save()
+        for i in range(12):
+            reminder = Reminder.objects.create(user=user, name="Test", time=datetime.now())
+            reminder.save()
+    
+    def test_reminders_renders(self):
+        """Check the reminders view renders"""
+        self.client.login(username="admin", password="admin")
+        response = self.client.get(reverse("reminders"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context.get("reminders").count(), 12)
+        self.assertTemplateUsed("assistor/reminders.html")

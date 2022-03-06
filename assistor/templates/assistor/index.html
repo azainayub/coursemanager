@@ -80,7 +80,7 @@ Home
             <!-- show view all -->
             {% if reminders.count == 4 %}
             <div class="d-flex justify-content-end m-3">
-                <div><a href="#" class="link-secondary">View all</a></div>
+                <div><a href="{% url 'reminders' %}" class="link-secondary">View all</a></div>
             </div>
             {% endif %}
         </section>
