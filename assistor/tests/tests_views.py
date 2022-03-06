@@ -5,7 +5,7 @@ from django.db.models import Max
 
 from assistor.views import index
 from assistor.models import Course, User, File, Link, Instructor, Reminder
-from assistor.forms import LinkForm, InstructorForm, ReminderForm
+from assistor.forms import CourseForm, LinkForm, InstructorForm, ReminderForm
 
 class RegistrationTestCase(TestCase):
     def test_user_registers_with_valid_data(self):
@@ -77,6 +77,34 @@ class LoginViewTestCase(TestCase):
         c = Client()
         response = c.post("/login", {"username": "azainayub", "password": "abc"})
         self.assertEquals(response.context.get("message"), "Failed to login!")
+
+class NewCourseTestCase(TestCase):
+    """Test the new course view"""
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@admin.com", password="admin")
+        user.save()
+
+    def test_new_course_render(self):
+        """Check the new course renders"""
+        self.client.login(username="admin", password="admin")
+        response = self.client.get(reverse("course_new"))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.context.get("form"), CourseForm)
+        self.assertTemplateUsed(response, "assistor/course_new.html")
+
+    def test_new_course_is_created(self):
+        """Check the new course is created"""
+        self.client.login(username="admin", password="admin")
+        response = self.client.post(reverse("course_new"), {
+            "title": "Information Security", 
+            "start_date": date(2022, 2, 28),
+            "completion_date": date(2022, 7, 3),
+            "grade": ["A"],
+            "provider": "X University"
+        })
+        course = Course.objects.get(title="Information Security")
+        self.assertRedirects(response, reverse("course", args=[course.id]))
 
 class CourseViewTestCase(TestCase):
     """

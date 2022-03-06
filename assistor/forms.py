@@ -29,8 +29,8 @@ class CourseForm(forms.ModelForm):
         fields = ["title", "start_date", "completion_date", "grade", "provider"]
         widgets = {
             "title": TextInput(attrs={"class": "form-control form-control-sm"}),
-            "start_date": DateInput(attrs={"class": "form-control form-control-sm", "type": "datetime-local"}),
-            "completion_date": DateInput(attrs={"class": "form-control form-control-sm", "type": "datetime-local"}),
+            "start_date": DateInput(attrs={"class": "form-control form-control-sm", "type": "date"}),
+            "completion_date": DateInput(attrs={"class": "form-control form-control-sm", "type": "date"}),
             "grade": TextInput(attrs={"class": "form-control form-control-sm"}),
             "provider": TextInput(attrs={"class": "form-control form-control-sm"})
         }
