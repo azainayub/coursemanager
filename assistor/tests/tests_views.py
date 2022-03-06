@@ -394,43 +394,30 @@ class FileTestCase(TestCase):
         self.assertEqual(response.context.get("file"), file)
         self.assertTemplateUsed(response, "assistor/file.html")
 
-class NewFileViewTestCase(TestCase):
-    """
-    Test the new file view
-    """
+class NewFileTestCase(TestCase):
+    """Test the new file view"""
     def setUp(self):
         user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
         email="admin@admin.com", password="admin")
-        course = Course.objects.create(user=user, title="Human Computer Interaction")
+        course = Course.objects.create(user=user, title="Information Security")
         user.save()
         course.save()
 
-    def test_new_file_logged_out(self):
-        """Check a logged out user should not access new file"""
-        course = Course.objects.get(title="Human Computer Interaction")
-        response = self.client.get(reverse("file_new", args={course.id}))
-        self.assertRedirects(response, "/login?next=/courses/1/files/new")
-
-    def test_new_file_logged_in(self):
-        """Check a logged in user access new file"""
+    def test_new_file_render(self):
+        """Check the new file form renders"""
         self.client.login(username="admin", password="admin")
-        course = Course.objects.get(title="Human Computer Interaction")
-        response = self.client.get(reverse("file_new", args={course.id}))
-
+        course = Course.objects.get(title="Information Security")
+        response = self.client.get(reverse("file_new", args=[course.id]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context.get("course"), course)
-        self.assertTemplateUsed("assistor/file_new.html")
+        self.assertIsInstance(response.context.get("form"), FileForm)
+        self.assertTemplateUsed(response, "assistor/file_new.html")
 
-    def test_new_file_invalid_course_id(self):
-        """Check a new file should return 404 for invalid course id"""
+    def test_new_file_is_created(self):
+        """Check the new file is created"""
         self.client.login(username="admin", password="admin")
-        response = self.client.get(reverse("file_new", args={Course.objects.filter().aggregate(Max('id')).get('id__max') + 1}))
-        self.assertTrue(response.status_code, 404)
-
-    def test_new_file_adds_file(self):
-        """Check an authorised user can add new file"""
-        self.client.login(username="admin", password="admin")
-        course = Course.objects.get(title="Human Computer Interaction")
+        course = Course.objects.get(title="Information Security")
+        # Adding the file
         with open("assistor/templates/assistor/index.html") as tf:
             response = self.client.post(reverse("file_new", args=[course.id]), {
                 "name": "TestFile", 
@@ -438,7 +425,8 @@ class NewFileViewTestCase(TestCase):
                 "file": tf
             }, 
             format='multipart/form-data')
-        self.assertRedirects(response, reverse("course", args={course.id}))
+        file = File.objects.get(name="TestFile")
+        self.assertRedirects(response, reverse("file", args=[course.id, file.id]))
 
 class EditFileTestCase(TestCase):
     """Test the edit file view"""

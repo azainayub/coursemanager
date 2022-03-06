@@ -41,7 +41,7 @@ class NoteFormTestCase(TestCase):
         course = Course.objects.create(user=user, title="Information Security")
         course.save()
 
-    def test_valid_course_data(self):
+    def test_valid_note_data(self):
         """Check the form with valid data"""
         form_data = {
             "title": "Lorem Ipsum",
@@ -50,7 +50,7 @@ class NoteFormTestCase(TestCase):
         form = NoteForm(data=form_data)
         self.assertTrue(form.is_valid())
     
-    def test_invalid_course_data(self):
+    def test_invalid_note_data(self):
         """Check the form with invalid data"""
         # Missing title and title exceeding max length
         form_data = {
@@ -63,3 +63,21 @@ class NoteFormTestCase(TestCase):
         }
         form = NoteForm(data=form_data)
         self.assertFalse(form.is_valid())
+
+class FileFormTestCase(TestCase):
+    """Test the file form"""
+
+    def setUp(self):
+        user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
+        email="admin@...", password="admin")
+        user.save()
+        course = Course.objects.create(user=user, title="Information Security")
+        course.save()
+
+    def test_valid_file_data(self):
+        """Check the form with valid data"""
+        pass
+    
+    def test_invalid_file_data(self):
+        """Check the form with invalid data"""
+        pass

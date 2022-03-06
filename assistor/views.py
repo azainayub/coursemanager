@@ -654,8 +654,6 @@ def new_file(request, course_id):
 
     :template:`assistor/file_new.html`
     """
-    form = FileForm()
-
     # Retreive course from database
     course = get_object_or_404(Course, id=course_id, user=request.user)
 
@@ -669,19 +667,19 @@ def new_file(request, course_id):
         # Validate the form data
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse("course", args=[course.id]))
+            return HttpResponseRedirect(reverse("file", args=[course.id, file.id]))
         else:
             return render(request, "assistor/file_new.html", {
             "message": "Failed to add file!",
             "course": course,
-            "form": form
+            "form": FileForm()
         })
 
     # Show the New File Form
     elif request.method == "GET":
         return render(request, "assistor/file_new.html", {
             "course": course,
-            "form": form
+            "form": FileForm()
         })
 
     # Only POST and GET allowed
