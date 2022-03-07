@@ -9,32 +9,33 @@
     
     <!-- form for adding a new link -->
     <form class="row g-3 p-4 mx-auto shadow rounded" action="{% url 'instructor_new' course.id %}" method="POST">
-        <h2>
-            <span class="material-icons-outlined fs-2">
-                people
-            </span>
-            New Instructor
-        </h2>
+        {% include 'assistor/snippets/form_header_snippet.html' with header_icon="people" header_name="New Instructor" %}
+        
         {% csrf_token %}
         <div class="col-md-6">
             {{ form.errors }}
         </div>
+
         <div class="col-md-12">
             <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}:</label>
             {{ form.title }}
         </div>
+
         <div class="col-md-12">
             <label for="{{ form.first_name.id_for_label }}" class="form-label">{{ form.first_name.label }}:</label>
             {{ form.first_name }}
         </div>
+
         <div class="col-md-12">
             <label for="{{ form.last_name.id_for_label }}" class="form-label">{{ form.last_name.label }}:</label>
             {{ form.last_name }}
         </div>
+
         <div class="col-md-12">
             <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}:</label>
             {{ form.email }}
         </div>
+        
         <div class="col-md-2 mx-auto">
             <input class="btn btn-primary" type="submit" value="Add">
         </div>
