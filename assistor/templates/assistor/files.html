@@ -25,12 +25,8 @@ Files
         <div class="row">
             {% for file in files %}
             <div class="col-sm-3">
-                <div class="card bg-light-brown text-brown mb-4">
-                  <div class="card-body">
-                    <h5 class="card-title">{{ file.name }}</h5>
-                    <a href="{% url 'file' course.id file.id %}" class="btn btn-primary">View</a>
-                  </div>
-                </div>
+                {% url 'file' course.id file.id as file_url %}
+                {% include 'assistor/snippets/card.html' with background_color='bg-light-brown' text_color='text-brown' title=file.name url=file_url %}
               </div>
             {% endfor %}
         </div>
