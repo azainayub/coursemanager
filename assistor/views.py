@@ -179,6 +179,11 @@ def course_new(request):
             # Course added successfully
             form.save()
             return HttpResponseRedirect(reverse("course", args=[course.id]))    
+        
+        else:
+            return render(request, "assistor/course_new.html", {
+            "form": form
+        })
 
     # Show the form for adding course
     elif request.method == "GET":
