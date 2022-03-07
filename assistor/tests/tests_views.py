@@ -433,23 +433,16 @@ class EditFileTestCase(TestCase):
     def setUp(self):
         user = User.objects.create_user(first_name="admin", last_name="admin", username = "admin",
         email="admin@admin.com", password="admin")
-        course = Course.objects.create(user=user, title="Human Computer Interaction")
         user.save()
+        course = Course.objects.create(user=user, title="Human Computer Interaction")
         course.save()
+        file = File.objects.create(course=course, name="TestFile", category=["AS"], file="assistor/templates/assistor/index.html")
+        file.save()
 
     def test_edit_file_renders(self):
         """Check the edit file view renders"""
         self.client.login(username="admin", password="admin")
         course = Course.objects.get(title="Human Computer Interaction")
-
-        # Adding the file
-        with open("assistor/templates/assistor/index.html") as tf:
-            self.client.post(reverse("file_new", args=[course.id]), {
-                "name": "TestFile", 
-                "category": ['AS'],
-                "file": tf
-            }, 
-            format='multipart/form-data')
 
         file = File.objects.get(name="TestFile")
         response = self.client.get(reverse("file_edit", args=[course.id, file.id]))
@@ -463,15 +456,6 @@ class EditFileTestCase(TestCase):
         """Check the file_edit view edits file"""
         self.client.login(username="admin", password="admin")
         course = Course.objects.get(title="Human Computer Interaction")
-
-        # Adding the file
-        with open("assistor/templates/assistor/index.html") as tf:
-            self.client.post(reverse("file_new", args=[course.id]), {
-                "name": "TestFile", 
-                "category": ['AS'],
-                "file": tf
-            }, 
-            format='multipart/form-data')
         
         file = File.objects.get(name="TestFile")
 
