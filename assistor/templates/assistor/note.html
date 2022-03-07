@@ -5,21 +5,7 @@
 {% endblock %}
 
 {% block main %}
-    <!-- course header -->
-    <section id="course-header" class="mb-5">
-        <div class="d-flex justify-content-between">
-            <div class="w-75"><h1>{{ course.title }}</h1></div>
-            <div>
-                <a href="{% url 'course_delete' course.id %}"><button type="button" class="btn btn-link text-danger"><span class="material-icons-outlined fs-2">delete</span></button></a>
-                <a href="{% url 'course_edit' course.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">edit</span></button></a>
-            </div>
-        </div>
-        <div id="course-details">
-            <div>{% if course.provider %}{{ course.provider }}{% endif %}</div>
-            <div>{% if course.start_date %}{{ course.start_date }}{% endif %}{% if course.completion_date %} to {{ course.completion_date }}{% endif %}</div>
-            <div>{% if course.grade %}{{ course.grade }}{% endif %}</div>
-        </div>
-    </section>
+    {% include "assistor/snippets/course_header_snippet.html" %}
 
     <!-- notes header -->
     <div class="d-flex justify-content-between">
