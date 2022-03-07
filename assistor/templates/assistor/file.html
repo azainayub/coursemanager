@@ -11,23 +11,25 @@
     <!-- files header -->
     {% include 'assistor/snippets/files_header_snippet.html' %}
 
-    <!-- file header -->
-    <div class="d-flex justify-content-between p-3 bg-light-brown text-brown">
-        <div>
-            <h3 class="text-brown">{{ file.name }}</h3>
+    <!-- file -->
+    <div class="container p-3 bg-light-brown text-brown rounded">
+        <div class="d-flex justify-content-between">
+            <div>
+                <h3 class="text-brown">{{ file.name }}</h3>
+            </div>
+            <div>
+                <a href="{% url 'file_delete' course.id file.id %}"><button type="button" class="btn btn-link text-danger"><span class="material-icons-outlined fs-4">delete</span></button></a>
+                <a href="{% url 'file_edit' course.id file.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-4">edit</span></button></a>
+            </div>
         </div>
+    
         <div>
-            <a href="{% url 'file_delete' course.id file.id %}"><button type="button" class="btn btn-link text-danger"><span class="material-icons-outlined fs-2">delete</span></button></a>
-            <a href="{% url 'file_edit' course.id file.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">edit</span></button></a>
+            <span class="material-icons-outlined fs-1">
+                insert_drive_file
+                </span>
+            <p>{{ file.file }}</p>
+            <small class="text-muted">Uploaded on {{ file.creation_time }}</small>
+            <p><a href="{{ file.file.url }}">Download</a></p>
         </div>
-    </div>
-
-    <div class="container p-3 bg-light-brown text-brown">
-        <span class="material-icons-outlined fs-1">
-            insert_drive_file
-            </span>
-        <p>{{ file.name }}</p>
-        <small class="text-muted">Uploaded on {{ file.creation_time }}</small>
-        <p><a href="{{ file.file.url }}">Download</a></p>
     </div>
 {% endblock %}
