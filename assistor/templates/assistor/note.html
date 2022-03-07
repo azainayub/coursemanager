@@ -19,19 +19,23 @@
         </div>
     </div>
 
-    <!-- note header -->
-    <div class="d-flex justify-content-between p-3 bg-light-orange text-orange">
-        <div>
-            <h3 class="text-orange">{{ note.title }}</h3>
+    
+    <div class="container p-3 bg-light-orange text-orange rounded">
+        <!-- note header -->
+        <div class="d-flex justify-content-between ">
+            <div>
+                <h3 class="text-orange">{{ note.title }}</h3>
+            </div>
+            <div>
+                <a href="{% url 'note_delete' course.id note.id %}"><button type="button" class="btn btn-link text-danger"><span class="material-icons-outlined fs-4">delete</span></button></a>
+                <a href="{% url 'note_edit' course.id note.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-4">edit</span></button></a>
+            </div>
         </div>
+    
+        <!-- note content -->
         <div>
-            <a href="{% url 'note_delete' course.id note.id %}"><button type="button" class="btn btn-link text-danger"><span class="material-icons-outlined fs-2">delete</span></button></a>
-            <a href="{% url 'note_edit' course.id note.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">edit</span></button></a>
+            <p>{{ note.content }}</p>
         </div>
     </div>
-
-    <!-- note content -->
-    <div class="container p-3 bg-light-orange text-orange">
-        <p>{{ note.content }}</p>
-    </div>
+    
 {% endblock %}
