@@ -28,7 +28,7 @@
 }
 
 .text-teal {
-    color: #E0F2F1;
+    color: #004D40;
 }
 
 .text-orange {
@@ -45,4 +45,10 @@
 
 .text-cyan {
     color: #006064;
+}
+
+
+.clickable:hover {
+    
+    box-shadow: 0 .5rem 1rem rgba(0,0,0, 0.15);
 }
