@@ -6,36 +6,28 @@
 {% endblock %}
 
 {% block main %}
-    <div class="container mt-5">
-        <!-- reminders header -->
-        <div class="d-flex justify-content-between">
-            <div>
-                <h2>
-                    <span class="material-icons-outlined fs-2">
-                        insert_invitation
-                    </span>
-                Reminders
-            </h2>
-            </div>
-            <div>
-                <a href="{% url 'reminder_new' %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
-            </div>
+    <!-- reminders header -->
+    <div class="d-flex justify-content-between">
+        <div>
+            <h2>
+                <span class="material-icons-outlined fs-2">
+                    insert_invitation
+                </span>
+            Reminders
+        </h2>
         </div>
+        <div>
+            <a href="{% url 'reminder_new' %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
+        </div>
+    </div>
 
-        <!-- list of reminders -->
-        <div class="row">
-            {% for reminder in reminders %}
-            <div class="col-sm-3 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ reminder.name }}</h5>
-                        <p class="card-text">{{ reminder.time }}</p>
-                        <!-- todo reminder url -->
-                        <a href="{% url 'reminder' reminder.id %}" class="btn btn-primary">View</a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+    <!-- list of reminders -->
+    <div class="row">
+        {% for reminder in reminders %}
+        <div class="col-sm-3 mb-4">
+            {% url 'reminder' reminder.id as reminder_url %}
+            {% include "assistor/snippets/card.html" with background_color="bg-light-teal" text_color="text-teal" title=reminder.name text=reminder.time url=reminder_url %}
         </div>
+        {% endfor %}
     </div>
 {% endblock %}

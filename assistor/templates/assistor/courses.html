@@ -26,13 +26,9 @@
         <div class="row">
             {% for course in courses %}
             <div class="col-sm-3 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                    <h5 class="card-title">{{ course.title }}</h5>
-                    <a href="{% url 'course' course.id %}" class="btn btn-primary">View</a>
-                    </div>
-                </div>
-                </div>
+                {% url 'course' course.id as course_url %}
+                {% include "assistor/snippets/card.html" with background_color="bg-light-purple" text_color="text-purple" title=course.title url=course_url %}
+            </div>
             {% endfor %}
         </div>
     </div>
