@@ -25,12 +25,8 @@ Notes
         <div class="row">
             {% for note in notes %}
             <div class="col-sm-3 mb-4">
-                <div class="card note bg-light-orange text-orange">
-                  <div class="card-body">
-                    <h5 class="card-title">{{ note.title }}</h5>
-                    <a href="{% url 'note' course.id note.id %}" class="btn btn-primary">View</a>
-                  </div>
-                </div>
+                {% url 'note' course.id note.id as note_url %}
+                {% include 'assistor/snippets/card.html' with background_color='bg-light-orange' text_color='text-orange' title=note.title url=note_url %}
               </div>
             {% endfor %}
         </div>
