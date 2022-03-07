@@ -41,12 +41,8 @@ Course
         <div class="row">
             {% for note in notes %}
             <div class="col-sm-3">
-                <div class="card note bg-light-orange text-orange">
-                  <div class="card-body">
-                    <h5 class="card-title">{{ note.title }}</h5>
-                    <a href="{% url 'note' course.id note.id %}" class="btn btn-outline-primary">View</a>
-                  </div>
-                </div>
+                {% url 'note' course.id note.id as note_url %}
+                {% include 'assistor/snippets/card.html' with background_color='bg-light-orange' text_color='text-orange' title=note.title url=note_url %}
               </div>
             {% endfor %}
         </div>
@@ -79,12 +75,8 @@ Course
         <div class="row">
             {% for file in files %}
             <div class="col-sm-3">
-                <div class="card bg-light-brown text-brown">
-                  <div class="card-body">
-                    <h5 class="card-title">{{ file.name }}</h5>
-                    <a href="{% url 'file' course.id file.id %}" class="btn btn-primary">View</a>
-                  </div>
-                </div>
+                {% url 'file' course.id file.id as file_url %}
+                {% include 'assistor/snippets/card.html' with background_color='bg-light-brown' text_color='text-brown' title=file.name url=file_url %}
               </div>
             {% endfor %}
         </div>
@@ -117,10 +109,10 @@ Course
         <div class="row">
             {% for instructor in instructors %}
             <div class="col-sm-12 mb-3">
-                <div class="card bg-light-green text-green">
+                <div class="card bg-light-green text-green clickable">
                     <div class="card-body">
                       <h5 class="card-title">{{ instructor.title }} {{ instructor.first_name }} {{ instructor.last_name }}</h5>
-                      <a href="mailto:{{ instructor.email }}" class="card-link">{{ instructor.email }}</a>
+                      <a href="mailto:{{ instructor.email }}" class="stretched-link">{{ instructor.email }}</a>
                     </div>
                 </div>
             </div>
@@ -132,7 +124,10 @@ Course
         <!-- links header -->
         <div class="d-flex justify-content-between">
             <div>
-                <h2>
+            <h2>
+                <span class="material-icons-outlined fs-2">
+                    link
+                </span>
                 Links
             </h2>
             </div>
@@ -145,12 +140,10 @@ Course
         <div class="row">
             {% for link in links %}
             <div class="col-sm-12 mb-3">
-                <div class="card bg-light-cyan text-cyan">
+                <div class="card bg-light-cyan text-cyan clickable">
                     <div class="card-body">
-                      <h5 class="card-title">{{ link.name }}</h5>
-                      <a href="{{ link.url }}" class="card-link" target="blank"><span class="material-icons-outlined">
-                        link
-                    </span>{{ link.url }}</a>
+                        <h5 class="card-title">{{ link.name }}</h5>
+                      <a href="{{ link.url }}" class="stretched-link" target="blank">{{ link.url }}</a>
                     </div>
                 </div>
             </div>
