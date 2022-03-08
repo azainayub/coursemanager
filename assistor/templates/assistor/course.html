@@ -98,7 +98,7 @@ Course
             <div class="col-sm-12 mb-3">
                 <div class="card bg-light-green text-green clickable">
                     <div class="card-body">
-                      <h5 class="card-title">{{ instructor.title }} {{ instructor.first_name }} {{ instructor.last_name }}</h5>
+                      <h5 class="card-title">{{ instructor.get_title_display }} {{ instructor.first_name }} {{ instructor.last_name }}</h5>
                       <a href="mailto:{{ instructor.email }}" class="stretched-link">{{ instructor.email }}</a>
                     </div>
                 </div>
