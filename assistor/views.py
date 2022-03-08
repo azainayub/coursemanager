@@ -1,6 +1,4 @@
-from cmath import log
-from sys import excepthook
-from django.http.response import Http404, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseNotFound, HttpResponseRedirect
+from django.http.response import HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
@@ -51,7 +49,7 @@ def login_view(request):
     # Process the submitted login form
     if request.method == "POST":
         form = LoginForm(request.POST)
-
+        
         # Check if form is valid
         if form.is_valid():
 
@@ -116,7 +114,7 @@ def register(request):
             email = form.cleaned_data["email"]
 
             # Ensure password matches confirmation
-            password = request.POST["password"]
+            password = form.cleaned_data["password"]
             confirmation = request.POST["confirmation"]
             if password != confirmation:
                 form.add_error("password", "Passwords must match.")
@@ -127,7 +125,7 @@ def register(request):
 
             # Attempt to create new user
             try:
-                user = User.objects.create_user(first_name=first_name, last_name=last_name, username=username, email=email)
+                user = User.objects.create_user(first_name=first_name, last_name=last_name, username=username, email=email, password=password)
                 login(request, user)
                 return HttpResponseRedirect(reverse("index"))
             except IntegrityError:
