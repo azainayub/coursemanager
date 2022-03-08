@@ -11,7 +11,7 @@ urlpatterns = [
     path("courses/<int:course_id>", views.course, name="course"),
     path("courses/<int:course_id>/edit", views.course_edit, name="course_edit"),
     path("courses/new", views.course_new, name="course_new"),
-    path("courses/<int:id>/delete", views.course_delete, name="course_delete"),
+    path("courses/<int:course_id>/delete", views.course_delete, name="course_delete"),
     path("courses/<int:course_id>/notes", views.notes, name="notes"),
     path("courses/<int:course_id>/notes/<int:note_id>", views.note, name="note"),
     path("courses/<int:course_id>/notes/new", views.note_new, name="note_new"),
@@ -28,5 +28,5 @@ urlpatterns = [
     path("reminders/new", views.reminder_new, name="reminder_new"),
     path("reminders/<int:reminder_id>", views.reminder, name="reminder"),
     path("reminders/<int:reminder_id>/edit", views.reminder_edit, name="reminder_edit"),
-    path("reminders/<int:id>/delete", views.reminder_delete, name="reminder_delete")
+    path("reminders/<int:reminder_id>/delete", views.reminder_delete, name="reminder_delete")
 ]

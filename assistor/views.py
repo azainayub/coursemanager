@@ -481,21 +481,16 @@ def file(request, course_id, file_id):
     })
 
 @login_required(login_url="login")
-def course_delete(request, id):
-    # Retreive course from database
-    course = Course.objects.get(id=id)
-
-    # Allow only the course creator to delete
-    if request.user == course.user:
+def course_delete(request, course_id):
+    """
+    Delete the course :model:`assistor.Course`.
+    """
+    course = get_object_or_404(Course, id=course_id, user=request.user)
         
-        # Delete the course
-        course.delete()
+    # Delete the course
+    course.delete()
 
-        return HttpResponseRedirect(reverse("index"))
-
-    # Deny access to unauthorized users
-    else:
-        return HttpResponseForbidden()
+    return HttpResponseRedirect(reverse("index"))
 
 @login_required(login_url="login")
 def reminder_new(request):
@@ -603,44 +598,29 @@ def reminder_edit(request, reminder_id):
 
 
 @login_required(login_url="login")
-def reminder_delete(request, id):
-    # Retreive reminder from database
-    reminder = Reminder.objects.get(id=id)
+def reminder_delete(request, reminder_id):
+    """
+    Delete the reminder :model:`assistor.Reminder`.
+    """
+    reminder = get_object_or_404(Reminder, id=reminder_id, user=request.user)
+    
+    # Delete the reminder
+    reminder.delete()
 
-    # Allow only the reminder creator to delete
-    if request.user == reminder.user:
-        
-        # Delete the reminder
-        reminder.delete()
-
-        return HttpResponseRedirect(reverse("index"))
-
-    # Deny unauthorized users
-    else:
-        return HttpResponseForbidden()
-
+    return HttpResponseRedirect(reverse("index"))
 
 @login_required(login_url="login")
 def note_delete(request, course_id, note_id):
-    try:
-        # Retreive note from database
-        note = Note.objects.get(id=note_id)
-
-        # Allow only the note creator to delete
-        if request.user == note.course.user:
+    """
+    Delete the note :model:`assistor.Note`.
+    """
+    course = get_object_or_404(Course, id=course_id, user=request.user)
+    note = get_object_or_404(Note, id=note_id, course=course)
             
-            # Delete the note
-            note.delete()
+    # Delete the note
+    note.delete()
 
-            return HttpResponseRedirect(reverse("course", args=[course_id]))
-            
-        # Deny access to unauthorized user
-        else:
-            return HttpResponseForbidden()
-
-    # Note doesn't exist in the database
-    except Note.DoesNotExist:
-        return HttpResponseNotFound()
+    return HttpResponseRedirect(reverse("course", args=[course_id]))
 
 @login_required(login_url="login")
 def new_file(request, course_id):
@@ -863,23 +843,13 @@ def reminders(request):
 
 @login_required(login_url="login")
 def file_delete(request, course_id, file_id):
-    try:
-        # Retreive file from the database
-        file = File.objects.get(id=file_id)
+    """
+    Delete the file :model:`assistor.File`.
+    """
+    course = get_object_or_404(Course, id=course_id, user=request.user)
+    file = get_object_or_404(File, id=file_id, course=course)
+    
+    # Delete the file
+    file.delete()
 
-        # Allow only the file owner to delete
-        if request.user == file.course.user:
-            
-            # Delete the file
-            file.delete()
-
-            return HttpResponseRedirect(reverse("course", args=[course_id]))
-
-        # Deny access to unauthorized users
-        else:
-            return HttpResponseForbidden()
-
-
-    # File doesn't exist in the database
-    except File.DoesNotExist:
-        return HttpResponseNotFound()
+    return HttpResponseRedirect(reverse("course", args=[course_id]))
