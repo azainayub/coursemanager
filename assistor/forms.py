@@ -1,9 +1,17 @@
 from django import forms
 from django.forms import EmailInput, PasswordInput, TextInput, DateInput
+from django.forms.utils import ErrorList
 from .models import Course, File, Note, Reminder, User, Link, Instructor
 
+# Custom Error List
+class CustomErrorList(ErrorList):
+    def __str__(self):
+        return self.as_divs()
+    def as_divs(self):
+        if not self: return ''
+        return '<div class="text-danger">%s</div>' % ''.join(['<div class="error">%s</div>' % e for e in self])
+
 class RegistrationForm(forms.ModelForm):
-    error_css_class = 'text-danger'
     class Meta:
         model = User
         fields = ["first_name", "last_name", "username", "email", "password"]
@@ -15,6 +23,10 @@ class RegistrationForm(forms.ModelForm):
             "password": PasswordInput(attrs={"class": "form-control form-control-sm"})
         }
 
+    def __init__(self, *args, **kwargs):
+        super(RegistrationForm, self).__init__(*args, **kwargs)
+        self.error_class = CustomErrorList
+
 class LoginForm(forms.Form):
     # Username
     username = forms.CharField(max_length=150, required=True, widget=TextInput(attrs={"class": "form-control form-control-sm"}))
@@ -22,6 +34,9 @@ class LoginForm(forms.Form):
     # Password
     password = forms.CharField(max_length=128, required=True, widget=PasswordInput(attrs={"class": "form-control form-control-sm"}))
 
+    def __init__(self, *args, **kwargs):
+        super(LoginForm, self).__init__(*args, **kwargs)
+        self.error_class = CustomErrorList
 
 class CourseForm(forms.ModelForm):
     class Meta:
@@ -34,6 +49,10 @@ class CourseForm(forms.ModelForm):
             "grade": TextInput(attrs={"class": "form-control form-control-sm"}),
             "provider": TextInput(attrs={"class": "form-control form-control-sm"})
         }
+    
+    def __init__(self, *args, **kwargs):
+        super(CourseForm, self).__init__(*args, **kwargs)
+        self.error_class = CustomErrorList
 
 class NoteForm(forms.ModelForm):
     class Meta:
@@ -43,6 +62,10 @@ class NoteForm(forms.ModelForm):
             "title": TextInput(attrs={"class": "form-control form-control-sm"}),
             "content": forms.Textarea(attrs={"class": "form-control form-control-sm"})
         }
+    
+    def __init__(self, *args, **kwargs):
+        super(NoteForm, self).__init__(*args, **kwargs)
+        self.error_class = CustomErrorList
 
 class FileForm(forms.ModelForm):
     class Meta:
@@ -56,6 +79,11 @@ class FileForm(forms.ModelForm):
                 }),
             "file": forms.FileInput(attrs={"class": "form-control form-control-sm"})
         }
+    
+    def __init__(self, *args, **kwargs):
+        super(FileForm, self).__init__(*args, **kwargs)
+        self.error_class = CustomErrorList
+
 
 class LinkForm(forms.ModelForm):
     class Meta:
@@ -65,6 +93,10 @@ class LinkForm(forms.ModelForm):
             "name": TextInput(attrs={"class": "form-control form-control-sm"}),
             "url": forms.URLInput(attrs={"class": "form-control form-control-sm"})
         }
+    
+    def __init__(self, *args, **kwargs):
+        super(LinkForm, self).__init__(*args, **kwargs)
+        self.error_class = CustomErrorList
 
 class InstructorForm(forms.ModelForm):
     class Meta:
@@ -79,6 +111,10 @@ class InstructorForm(forms.ModelForm):
             "last_name": forms.TextInput(attrs={"class": "form-control form-control-sm"}),
             "email": forms.EmailInput(attrs={"class": "form-control form-control-sm"}),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super(InstructorForm, self).__init__(*args, **kwargs)
+        self.error_class = CustomErrorList
 
 class ReminderForm(forms.ModelForm):
     class Meta:
@@ -88,3 +124,7 @@ class ReminderForm(forms.ModelForm):
             "name": forms.TextInput(attrs={"class": "form-control form-control-sm"}),
             "time": forms.DateTimeInput(attrs={"class": "form-control form-control-sm", "type": "datetime-local"})
         }
+    
+    def __init__(self, *args, **kwargs):
+        super(ReminderForm, self).__init__(*args, **kwargs)
+        self.error_class = CustomErrorList
