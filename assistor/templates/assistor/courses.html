@@ -6,30 +6,28 @@
 {% endblock %}
 
 {% block main %}
-    <div class="container mt-5">
-        <!-- courses header -->
-        <div class="d-flex justify-content-between">
-            <div>
-                <h2>
-                    <span class="material-icons-outlined fs-2">
-                        subject
-                    </span>
-                Courses
-            </h2>
-            </div>
-            <div>
-                <a href="{% url 'course_new' %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
-            </div>
+    <!-- courses header -->
+    <div class="d-flex justify-content-between">
+        <div>
+            <h2>
+                <span class="material-icons-outlined fs-2">
+                    subject
+                </span>
+            Courses
+        </h2>
         </div>
+        <div>
+            <a href="{% url 'course_new' %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
+        </div>
+    </div>
 
-        <!-- list of courses -->
-        <div class="row">
-            {% for course in courses %}
-            <div class="col-sm-3 mb-4">
-                {% url 'course' course.id as course_url %}
-                {% include "assistor/snippets/card.html" with background_color="bg-light-purple" text_color="text-purple" title=course.title url=course_url %}
-            </div>
-            {% endfor %}
+    <!-- list of courses -->
+    <div class="row">
+        {% for course in courses %}
+        <div class="col-sm-3 mb-4">
+            {% url 'course' course.id as course_url %}
+            {% include "assistor/snippets/card.html" with background_color="bg-light-purple" text_color="text-purple" title=course.title url=course_url %}
         </div>
+        {% endfor %}
     </div>
 {% endblock %}
