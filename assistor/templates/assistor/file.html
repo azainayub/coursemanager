@@ -20,8 +20,11 @@
             </div>
             <div>
                 <a href="{% url 'file_delete' course.id file.id %}"><button type="button" class="btn btn-link text-danger"><span class="material-icons-outlined fs-4">delete</span></button></a>
-                <a href="{% url 'file_edit' course.id file.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-4">edit</span></button></a>
+                <button type="button" class="btn btn-link text-black" data-bs-toggle="modal" data-bs-target="#editFileModal">
+                    <span class="material-icons-outlined fs-2">edit</span>
+                </button>
             </div>
+            <input type="hidden" id="file_id" name="file_id" value="{{ file.id }}">
         </div>
     
         <div>
@@ -33,4 +36,7 @@
             <p><a href="{{ file.file.url }}">Download</a></p>
         </div>
     </div>
+
+    {% include 'assistor/modals/file_edit_modal.html' with form=file_edit_form %}
+    <script src="{% static 'assistor/js/file.js' %}"></script>
 {% endblock %}

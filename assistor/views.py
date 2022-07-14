@@ -347,7 +347,13 @@ def file(request, course_id, file_id):
     course = get_object_or_404(Course, id=course_id, user=request.user)
     file = get_object_or_404(File, id=file_id, course=course)
 
-    return render(request, "assistor/file.html", {"course": course, "file": file, "file_form": FileForm(), "course_form": CourseForm(instance=course),})
+    return render(request, "assistor/file.html", {
+        "course": course, 
+        "file": file, 
+        "file_form": FileForm(),
+        "file_edit_form": FileForm(instance=file),
+        "course_form": CourseForm(instance=course),
+    })
 
 
 @login_required(login_url="login")
@@ -365,7 +371,11 @@ def reminder(request, reminder_id):
     :template:`assistor/reminder.html`
     """
     reminder = get_object_or_404(Reminder, id=reminder_id, user=request.user)
-    return render(request, "assistor/reminder.html", {"reminder": reminder, "reminder_form": ReminderForm(),})
+    return render(request, "assistor/reminder.html", {
+        "reminder": reminder, 
+        "reminder_form": ReminderForm(),
+        "reminder_edit_form": ReminderForm(instance=reminder),
+    })
 
 
 @login_required(login_url="login")
@@ -586,19 +596,7 @@ def reminder_new(request):
 @login_required(login_url="login")
 def reminder_edit(request, reminder_id):
     """
-    Display the reminder editing form :model:`assistor.Reminder`.
-
-    **Context**
-
-    ``reminder``
-        An instance of :model:`assistor.Reminder`.
-
-    ``form``
-        An instance of :form:`assistor.ReminderForm`.
-
-    **Template:**
-
-    :template:`assistor/reminder_edit.html`
+    Edit a Reminder
     """
 
     # Retrieve object
@@ -612,27 +610,11 @@ def reminder_edit(request, reminder_id):
             reminder.name = form.cleaned_data["name"]
             reminder.time = form.cleaned_data["time"]
             reminder.save()
-            return HttpResponseRedirect(reverse("reminder", args=[reminder.id]))
+            return JsonResponse(reminder.serialize(), status=201, safe=False)
         else:
-            return render(
-                request,
-                "assistor/reminder_edit.html",
-                {
-                    "message": "Failed to edit reminder",
-                    "reminder": reminder,
-                    "form": ReminderForm(instance=reminder),
-                },
-            )
+            return JsonResponse(form.errors, status=400, safe=False)
 
-    # Show the form to edit reminder
-    elif request.method == "GET":
-        return render(
-            request,
-            "assistor/reminder_edit.html",
-            {"reminder": reminder, "form": ReminderForm(instance=reminder)},
-        )
-
-    # Only GET and POST allowed
+    # Only POST allowed
     else:
         return HttpResponseNotAllowed()
 
@@ -680,19 +662,7 @@ def file_new(request, course_id):
 @login_required(login_url="login")
 def file_edit(request, course_id, file_id):
     """
-    Display the file editing form :model:`assistor.File`.
-
-    **Context**
-
-    ``course``
-        An instance of :model:`assistor.Course`.
-
-    ``form``
-        An instance of :form:`assistor.FileForm`.
-
-    **Template:**
-
-    :template:`assistor/file_edit.html`
+    Edit the File
     """
 
     # Retrieve objects
@@ -708,28 +678,11 @@ def file_edit(request, course_id, file_id):
             file.category = form.cleaned_data["category"]
             file.file = form.cleaned_data["file"]
             file.save()
-            return HttpResponseRedirect(reverse("file", args=[course.id, file.id]))
+            return JsonResponse(file.serialize(), status=201, safe=False)
         else:
-            return render(
-                request,
-                "assistor/file_edit.html",
-                {
-                    "message": "Failed to edit file!",
-                    "course": course,
-                    "file": file,
-                    "form": FileForm(instance=file),
-                },
-            )
-
-    # Show the form to edit file
-    elif request.method == "GET":
-        return render(
-            request,
-            "assistor/file_edit.html",
-            {"course": course, "file": file, "form": FileForm(instance=file)},
-        )
-
-    # Only GET and POST allowed
+            return JsonResponse(form.errors, status=400, safe=False)
+ 
+    # Only POST allowed
     else:
         return HttpResponseNotAllowed()
 

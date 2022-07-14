@@ -8,7 +8,6 @@ Reminder
 {% block main %}
     {% include 'assistor/snippets/reminders_header.html' %}
     {% include 'assistor/modals/reminder_new_modal.html' with form=reminder_form %}
-    <script src="{% static 'assistor/js/reminder.js' %}"></script>
     
     <!-- Reminder -->
     <div class="d-flex justify-content-between p-3 text-teal bg-light-teal rounded">
@@ -18,8 +17,13 @@ Reminder
         </div>
         <div>
             <a href="{% url 'reminder_delete' reminder.id %}"><button type="button" class="btn btn-link text-danger"><span class="material-icons-outlined fs-2">delete</span></button></a>
-            <a href="{% url 'reminder_edit' reminder.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">edit</span></button></a>
+            <button type="button" class="btn btn-link text-black" data-bs-toggle="modal" data-bs-target="#editReminderModal">
+                <span class="material-icons-outlined fs-2">edit</span>
+            </button>
         </div>
+        <input type="hidden" id="reminder_id" name="reminder_id" value="{{ reminder.id }}">
     </div>
 
+    {% include 'assistor/modals/reminder_edit_modal.html' with form=reminder_edit_form %}
+    <script src="{% static 'assistor/js/reminder.js' %}"></script>
 {% endblock %}
