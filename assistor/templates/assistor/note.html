@@ -1,4 +1,5 @@
 {% extends "assistor/layout.html" %}
+{% load static %}
 
 {% block title %}
     Note
@@ -16,6 +17,13 @@
                 </span>
             Notes
         </h2>
+        </div>
+        <div>
+            <button type="button" class="btn btn-link text-black" data-bs-toggle="modal" data-bs-target="#newNoteModal">
+                <span class="material-icons-outlined fs-2">add</span>
+            </button>
+            {% include 'assistor/modals/note_new_modal.html' with form=note_form %}
+            <script src="{% static 'assistor/js/note.js' %}"></script>
         </div>
     </div>
 

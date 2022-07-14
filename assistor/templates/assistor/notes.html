@@ -1,7 +1,8 @@
 {% extends 'assistor/layout.html' %}
+{% load static %}
 
 {% block title %}
-Notes
+    Notes
 {% endblock %}
 
 {% block main %}
@@ -17,7 +18,11 @@ Notes
             </h2>
             </div>
             <div>
-                <a href="{% url 'note_new' course.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
+                <button type="button" class="btn btn-link text-black" data-bs-toggle="modal" data-bs-target="#newNoteModal">
+                    <span class="material-icons-outlined fs-2">add</span>
+                </button>
+                {% include 'assistor/modals/note_new_modal.html' with form=note_form %}
+                <script src="{% static 'assistor/js/note.js' %}"></script>
             </div>
         </div>
 

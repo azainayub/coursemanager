@@ -1,14 +1,15 @@
 {% extends 'assistor/layout.html' %}
+{% load static %}
 
 {% block title %}
-Course
+    Course
 {% endblock %}
 {% block main %}
 <div class="container mt-5 mb-5 overflow-hidden">
     <!-- course header -->
     {% include 'assistor/snippets/course_header_snippet.html' %}
 
-    <section id="notes" class="mb-5">
+    <section class="mb-5">
         <!-- notes header -->
         <div class="d-flex justify-content-between">
             <div>
@@ -20,12 +21,16 @@ Course
             </h2>
             </div>
             <div>
-                <a href="{% url 'note_new' course.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
+                <button type="button" class="btn btn-link text-black" data-bs-toggle="modal" data-bs-target="#newNoteModal">
+                    <span class="material-icons-outlined fs-2">add</span>
+                </button>
+                {% include 'assistor/modals/note_new_modal.html' with form=note_form %}
+                <script src="{% static 'assistor/js/note.js' %}"></script>
             </div>
         </div>
 
         <!-- list of notes -->
-        <div class="row">
+        <div id="notes" class="row">
             {% for note in notes %}
             <div class="col-sm-3">
                 {% url 'note' course.id note.id as note_url %}

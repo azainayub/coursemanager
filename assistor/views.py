@@ -177,9 +177,9 @@ def courses(request):
     """
     return render(
         request, "assistor/courses.html", {
-                "courses": request.user.courses.all(),
-                "course_form": CourseForm(),
-            }
+            "courses": request.user.courses.all(),
+            "course_form": CourseForm(),
+        }
     )
 
 
@@ -221,6 +221,7 @@ def course(request, course_id):
             "files": File.objects.filter(course=course)[:4],
             "instructors": Instructor.objects.filter(course=course),
             "links": Link.objects.filter(course=course),
+            "note_form": NoteForm(),
         },
     )
 
@@ -244,7 +245,11 @@ def notes(request, course_id):
     """
     course = get_object_or_404(Course, id=course_id, user=request.user)
     return render(
-        request, "assistor/notes.html", {"course": course, "notes": course.notes.all()}
+        request, "assistor/notes.html", {
+            "course": course, 
+            "notes": course.notes.all(),
+            "note_form": NoteForm(),
+        }
     )
 
 
@@ -269,7 +274,11 @@ def note(request, course_id, note_id):
     note = get_object_or_404(Note, id=note_id, course=course)
 
     # Show the note
-    return render(request, "assistor/note.html", {"course": course, "note": note})
+    return render(request, "assistor/note.html", {
+        "course": course, 
+        "note": note,
+        "note_form": NoteForm(),
+    })
 
 
 @login_required(login_url="login")
@@ -450,19 +459,7 @@ def course_delete(request, course_id):
 @login_required(login_url="login")
 def note_new(request, course_id):
     """
-    Display a new note form :model:`assistor.Note`.
-
-    **Context**
-
-    ``course``
-        An instance of :model:`assistor.Course`.
-
-    ``form``
-        An instance of :form:`assistor.NoteForm`.
-
-    **Template:**
-
-    :template:`assistor/note_new.html`
+    Add a new note
     """
     course = get_object_or_404(Course, id=course_id, user=request.user)
     # Retreive course from database
@@ -480,17 +477,9 @@ def note_new(request, course_id):
             form.save()
 
             # Show the note
-            return HttpResponseRedirect(reverse("note", args=[course_id, note.id]))
+            return JsonResponse(note.serialize(), status=201, safe=False)
         else:
-            return render(
-                request, "assistor/note_new.html", {"course": course, "form": form}
-            )
-
-    # Show the form for adding new note
-    elif request.method == "GET":
-        return render(
-            request, "assistor/note_new.html", {"course": course, "form": NoteForm()}
-        )
+            return JsonResponse(form.errors, status=400, safe=False)
 
     # Only GET and POST allowed
     else:
