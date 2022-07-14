@@ -59,7 +59,11 @@
             </h2>
             </div>
             <div>
-                <a href="{% url 'file_new' course.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
+                <button type="button" class="btn btn-link text-black" data-bs-toggle="modal" data-bs-target="#newFileModal">
+                    <span class="material-icons-outlined fs-2">add</span>
+                </button>
+                {% include 'assistor/modals/file_new_modal.html' with form=file_form %}
+                <script src="{% static 'assistor/js/file.js' %}"></script>
             </div>
         </div>
 

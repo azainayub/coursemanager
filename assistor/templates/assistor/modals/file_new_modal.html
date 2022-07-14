@@ -1,0 +1,45 @@
+<div class="modal fade" id="newFileModal" tabindex="-1" aria-labelledby="newFileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="newFileModalLabel">
+            <span class="material-icons-outlined fs-2">
+                insert_drive_file
+            </span>
+            New File
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form name="newFileForm" enctype="multipart/form-data">
+                
+                {% csrf_token %}
+
+                <div id="errors" class="mb-3">
+                    {{ form.errors }}
+                </div>
+        
+                <div class="mb-3">
+                    <label for="{{ form.name.id_for_label }}" class="col-form-label">{{ form.name.label }}:</label>
+                    {{ form.name }}
+                </div>
+        
+                <div class="mb-3">
+                    <label for="{{ form.category.id_for_label }}" class="col-form-label">{{ form.category.label }}:</label>
+                    {{ form.category }}
+                </div>
+        
+                <div class="mb-3">
+                    <label for="{{ form.file.id_for_label }}" class="col-form-label">{{ form.file.label }}:</label>
+                    {{ form.file }}
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button id="addFileButton" name="submit" type="submit" form="newFileForm" class="btn btn-primary">Add</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<input type="hidden" id="course_id" name="course_id" value="{{ course.id }}">

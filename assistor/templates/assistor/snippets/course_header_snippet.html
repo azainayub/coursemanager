@@ -11,5 +11,6 @@
         <div>{% if course.provider %}{{ course.provider }}{% endif %}</div>
         <div>{% if course.start_date %}{{ course.start_date }}{% endif %}{% if course.completion_date %} to {{ course.completion_date }}{% endif %}</div>
         <div>{% if course.grade %}{{ course.grade }}{% endif %}</div>
+        <input type="hidden" id="course_id" name="course_id" value="{{ course.id }}">
     </div>
 </section>

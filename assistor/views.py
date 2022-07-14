@@ -176,10 +176,12 @@ def courses(request):
     Display all courses of user
     """
     return render(
-        request, "assistor/courses.html", {
+        request,
+        "assistor/courses.html",
+        {
             "courses": request.user.courses.all(),
             "course_form": CourseForm(),
-        }
+        },
     )
 
 
@@ -222,6 +224,7 @@ def course(request, course_id):
             "instructors": Instructor.objects.filter(course=course),
             "links": Link.objects.filter(course=course),
             "note_form": NoteForm(),
+            "file_form": FileForm(),
         },
     )
 
@@ -245,11 +248,13 @@ def notes(request, course_id):
     """
     course = get_object_or_404(Course, id=course_id, user=request.user)
     return render(
-        request, "assistor/notes.html", {
-            "course": course, 
+        request,
+        "assistor/notes.html",
+        {
+            "course": course,
             "notes": course.notes.all(),
             "note_form": NoteForm(),
-        }
+        },
     )
 
 
@@ -274,11 +279,15 @@ def note(request, course_id, note_id):
     note = get_object_or_404(Note, id=note_id, course=course)
 
     # Show the note
-    return render(request, "assistor/note.html", {
-        "course": course, 
-        "note": note,
-        "note_form": NoteForm(),
-    })
+    return render(
+        request,
+        "assistor/note.html",
+        {
+            "course": course,
+            "note": note,
+            "note_form": NoteForm(),
+        },
+    )
 
 
 @login_required(login_url="login")
@@ -302,7 +311,11 @@ def files(request, course_id):
     return render(
         request,
         "assistor/files.html",
-        {"course": course, "files": File.objects.filter(course=course)},
+        {
+            "course": course,
+            "files": File.objects.filter(course=course),
+            "file_form": FileForm(),
+        },
     )
 
 
@@ -326,7 +339,7 @@ def file(request, course_id, file_id):
     course = get_object_or_404(Course, id=course_id, user=request.user)
     file = get_object_or_404(File, id=file_id, course=course)
 
-    return render(request, "assistor/file.html", {"course": course, "file": file})
+    return render(request, "assistor/file.html", {"course": course, "file": file, "file_form": FileForm(),})
 
 
 @login_required(login_url="login")
@@ -658,19 +671,7 @@ def reminder_delete(request, reminder_id):
 @login_required(login_url="login")
 def file_new(request, course_id):
     """
-    Display the file form :model:`assistor.File`.
-
-    **Context**
-
-    ``course``
-        An instance of :model:`assistor.course`.
-
-    ``form``
-        An instance of :form:`assistor.FileForm`.
-
-    **Template:**
-
-    :template:`assistor/file_new.html`
+    Add a new file
     """
     # Retreive course from database
     course = get_object_or_404(Course, id=course_id, user=request.user)
@@ -685,25 +686,11 @@ def file_new(request, course_id):
         # Validate the form data
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse("file", args=[course.id, file.id]))
+            return JsonResponse(file.serialize(), status=201, safe=False)
         else:
-            return render(
-                request,
-                "assistor/file_new.html",
-                {
-                    "message": "Failed to add file!",
-                    "course": course,
-                    "form": FileForm(),
-                },
-            )
+            return JsonResponse(form.errors, status=400, safe=False)
 
-    # Show the New File Form
-    elif request.method == "GET":
-        return render(
-            request, "assistor/file_new.html", {"course": course, "form": FileForm()}
-        )
-
-    # Only POST and GET allowed
+    # Only POST allowed
     else:
         return HttpResponseNotAllowed()
 
