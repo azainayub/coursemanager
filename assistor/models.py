@@ -179,7 +179,7 @@ class File(models.Model):
             "course": self.course.id,
             "name": self.name,
             "category": self.get_category_display(),
-            "file": self.file,
+            "file": self.file.url,
         }
 
 
