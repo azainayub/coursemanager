@@ -43,7 +43,7 @@ def index(request):
         {
             "courses": request.user.courses.all()[:4],
             "reminders": request.user.reminders.all()[:4],
-            "form": CourseForm(),
+            "course_form": CourseForm(),
         },
     )
 
@@ -176,7 +176,10 @@ def courses(request):
     Display all courses of user
     """
     return render(
-        request, "assistor/courses.html", {"courses": request.user.courses.all()}
+        request, "assistor/courses.html", {
+                "courses": request.user.courses.all(),
+                "course_form": CourseForm(),
+            }
     )
 
 
@@ -357,12 +360,7 @@ def reminders(request):
 @login_required(login_url="login")
 def course_new(request):
     """
-    Display the course form :model:`assistor.Course`.
-
-    **Context**
-
-    ``form``
-        An instance of :form:`assistor.CourseForm`.
+    Add a new course
 
     """
 

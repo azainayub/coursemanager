@@ -6,11 +6,14 @@ Home
 {% endblock %}
 
 {% block main %}
-    <section id="courses">
+    <!-- Courses section -->
+    <section>
         {% include 'assistor/snippets/courses_header.html' %}
+        {% include 'assistor/modals/course_new_modal.html' with form=course_form %}
+        <script src="{% static 'assistor/js/course.js' %}"></script>
 
         <!-- list of courses -->
-        <div class="row">
+        <div id="courses" class="row">
             {% for course in courses %}
             <div class="col-sm-3">
                 {% url 'course' course.id as course_url %}
