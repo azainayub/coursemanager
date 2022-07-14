@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 class User(AbstractUser):
     # First name of the user
-    first_name = models.CharField(max_length=64 , null=False, blank=False)
+    first_name = models.CharField(max_length=64, null=False, blank=False)
 
     # Last name of the user
     last_name = models.CharField(max_length=64, null=False, blank=False)
@@ -19,13 +19,14 @@ class User(AbstractUser):
     email = models.CharField(max_length=256, null=False, blank=False, unique=True)
 
 
-
 class Course(models.Model):
     # User who created the course
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=True, related_name="courses")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=False, blank=True, related_name="courses"
+    )
 
     # Title of the course
-    title = models.CharField(max_length=64 , null=False, blank=False)
+    title = models.CharField(max_length=64, null=False, blank=False)
 
     # Start date of the course
     start_date = models.DateField(null=True, blank=True)
@@ -34,21 +35,39 @@ class Course(models.Model):
     completion_date = models.DateField(null=True, blank=True)
 
     # Grade of the course
-    grade = models.CharField(max_length=8 , null=True, blank=True)
+    grade = models.CharField(max_length=8, null=True, blank=True)
 
     # Course provider
-    provider = models.CharField(max_length=256 , null=True, blank=True)
+    provider = models.CharField(max_length=256, null=True, blank=True)
 
     # Time of creation
     creation_time = models.DateTimeField(auto_now=True, null=False, blank=True)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user": self.user.id,
+            "title": self.title,
+            "start_date": self.start_date,
+            "completion_date": self.completion_date,
+            "grade": self.grade,
+            "provider": self.provider,
+        }
+
     def __str__(self):
         return f"{self.title} by {self.user}"
 
+
 class Instructor(models.Model):
     # The course taught by instructor
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False, blank=True, related_name="instructors")
-    
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=True,
+        related_name="instructors",
+    )
+
     class Titles(models.TextChoices):
         # Titles
         DOCTOR = "DR", _("Dr.")
@@ -60,7 +79,13 @@ class Instructor(models.Model):
         PROFESSOR = "PR", _("Prof.")
         SENIOR = "SR", _("Sr.")
 
-    title = models.CharField(max_length=2, choices=Titles.choices, default=Titles.PROFESSOR, null=False, blank=False)
+    title = models.CharField(
+        max_length=2,
+        choices=Titles.choices,
+        default=Titles.PROFESSOR,
+        null=False,
+        blank=False,
+    )
 
     # First Name
     first_name = models.CharField(max_length=64, null=False, blank=False)
@@ -71,28 +96,52 @@ class Instructor(models.Model):
     # Email of the Instructor
     email = models.EmailField(max_length=256, null=True, blank=True, unique=True)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "course": self.course.id,
+            "title": self.get_title_display(),
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email,
+        }
+
     def get_name(self):
         return self.title.label + " " + self.first_name + " " + self.last_name
 
+
 class Note(models.Model):
     # The course note belongs to
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False, blank=True, related_name="notes")
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, null=False, blank=True, related_name="notes"
+    )
 
     # Title of the note
     title = models.CharField(max_length=64, null=False, blank=False)
 
     # Content of the note
-    content = models.CharField(max_length=8192 , null=False, blank=False)
+    content = models.CharField(max_length=8192, null=False, blank=False)
 
     # Time of creation
     creation_time = models.DateTimeField(auto_now=True, null=False, blank=True)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "course": self.course.id,
+            "title": self.title,
+            "content": self.content,
+        }
+
     def __str__(self):
         return f"{self.title}"
 
+
 class File(models.Model):
     # The course where file belongs
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False, blank=True, related_name="files")
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, null=False, blank=True, related_name="files"
+    )
 
     # Name of the file
     name = models.CharField(max_length=255, null=False, blank=False)
@@ -114,7 +163,9 @@ class File(models.Model):
         (OTHER, "Other"),
     ]
 
-    category = models.CharField(max_length=2, choices=CATEGORIES, default=OTHER, null=False, blank=False)
+    category = models.CharField(
+        max_length=2, choices=CATEGORIES, default=OTHER, null=False, blank=False
+    )
 
     # File
     file = models.FileField(null=False, blank=False)
@@ -122,9 +173,21 @@ class File(models.Model):
     # Time of creation
     creation_time = models.DateTimeField(auto_now=True, null=False, blank=True)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "course": self.course.id,
+            "name": self.name,
+            "category": self.get_category_display(),
+            "file": self.file,
+        }
+
+
 class Link(models.Model):
     # The course the link belongs to
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False, blank=True, related_name="links")
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, null=False, blank=True, related_name="links"
+    )
 
     # Name of the link
     name = models.CharField(max_length=256, null=False, blank=False)
@@ -135,9 +198,20 @@ class Link(models.Model):
     # Time of creation
     creation_time = models.DateTimeField(auto_now=True, null=False, blank=True)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "course": self.course.id,
+            "name": self.name,
+            "url": self.url,
+        }
+
+
 class Reminder(models.Model):
     # The user who added reminder
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=True, related_name="reminders")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=False, blank=True, related_name="reminders"
+    )
 
     # Name of the reminder
     name = models.CharField(max_length=256, null=False, blank=False)
@@ -148,3 +222,10 @@ class Reminder(models.Model):
     # Time of creation
     creation_time = models.DateTimeField(auto_now=True, null=False, blank=True)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user": self.user.id,
+            "name": self.name,
+            "time": self.time,
+        }
