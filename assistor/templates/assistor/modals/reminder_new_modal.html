@@ -1,0 +1,38 @@
+<div class="modal fade" id="newReminderModal" tabindex="-1" aria-labelledby="newReminderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="newReminderModalLabel">
+            <span class="material-icons-outlined fs-2">
+                event
+            </span>
+            New Reminder
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form name="newReminderForm">
+                
+                {% csrf_token %}
+
+                <div id="errors" class="mb-3">
+                    {{ form.errors }}
+                </div>
+        
+                <div class="mb-3">
+                    <label for="{{ form.name.id_for_label }}" class="col-form-label">{{ form.name.label }}:</label>
+                    {{ form.name }}
+                </div>
+        
+                <div class="mb-3">
+                    <label for="{{ form.start_date.id_for_label }}" class="col-form-label">{{ form.time.label }}:</label>
+                    {{ form.time }}
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button id="addReminderButton" name="submit" type="submit" form="newReminderForm" class="btn btn-primary">Add</button>
+        </div>
+      </div>
+    </div>
+</div>

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-Home
+    Home
 {% endblock %}
 
 {% block main %}
@@ -34,9 +34,11 @@ Home
 
     <section id="reminders" class="mt-5">
         {% include 'assistor/snippets/reminders_header.html' %}
+        {% include 'assistor/modals/reminder_new_modal.html' with form=reminder_form %}
+        <script src="{% static 'assistor/js/reminder.js' %}"></script>
 
-            <!-- list of reminders -->
-            <div class="row">
+        <!-- list of reminders -->
+        <div class="row">
             {% for reminder in reminders %}
             <div class="col-sm-3">
                 {% url 'reminder' reminder.id as reminder_url %}

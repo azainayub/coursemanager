@@ -44,6 +44,7 @@ def index(request):
             "courses": request.user.courses.all()[:4],
             "reminders": request.user.reminders.all()[:4],
             "course_form": CourseForm(),
+            "reminder_form": ReminderForm(),
         },
     )
 
@@ -359,7 +360,7 @@ def reminder(request, reminder_id):
     :template:`assistor/reminder.html`
     """
     reminder = get_object_or_404(Reminder, id=reminder_id, user=request.user)
-    return render(request, "assistor/reminder.html", {"reminder": reminder})
+    return render(request, "assistor/reminder.html", {"reminder": reminder, "reminder_form": ReminderForm(),})
 
 
 @login_required(login_url="login")
@@ -377,7 +378,7 @@ def reminders(request):
     :template:`assistor/reminders.html`
     """
     return render(
-        request, "assistor/reminders.html", {"reminders": request.user.reminders.all()}
+        request, "assistor/reminders.html", {"reminders": request.user.reminders.all(), "reminder_form": ReminderForm(),}
     )
 
 
@@ -592,11 +593,9 @@ def reminder_new(request):
         # Validate the form data
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse("index"))
-
-    # Show form for adding new reminder
-    elif request.method == "GET":
-        return render(request, "assistor/reminder_new.html", {"form": ReminderForm()})
+            return JsonResponse(reminder.serialize(), status=201, safe=False)
+        else:
+            return JsonResponse(form.errors, status=400, safe=False)
 
     # Only GET and POST allowed
     else:

@@ -6,7 +6,10 @@ Reminder
 {% endblock %}
 
 {% block main %}
-    {% include 'assistor/snippets/reminder_header_snippet.html' %}
+    {% include 'assistor/snippets/reminders_header.html' %}
+    {% include 'assistor/modals/reminder_new_modal.html' with form=reminder_form %}
+    <script src="{% static 'assistor/js/reminder.js' %}"></script>
+    
     <!-- Reminder -->
     <div class="d-flex justify-content-between p-3 text-teal bg-light-teal rounded">
         <div class="">
