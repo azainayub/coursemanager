@@ -1,0 +1,38 @@
+<div class="modal fade" id="editNoteModal" tabindex="-1" aria-labelledby="editNoteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="editNoteModalLabel">
+            <span class="material-icons-outlined fs-2">
+                subject
+            </span>
+            Edit Note
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form name="editNoteForm">
+                
+                {% csrf_token %}
+
+                <div id="errors" class="mb-3">
+                    {{ form.errors }}
+                </div>
+        
+                <div class="mb-3">
+                    <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}:</label>
+                    {{ form.title }}
+                </div>
+        
+                <div class="mb-3">
+                    <label for="{{ form.provider.id_for_label }}" class="form-label">{{ form.content.label }}:</label>
+                    {{ form.content }}
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button id="editNoteButton" name="submit" type="submit" form="editNoteForm" class="btn btn-primary">Save</button>
+        </div>
+      </div>
+    </div>
+</div>

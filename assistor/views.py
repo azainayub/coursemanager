@@ -292,6 +292,7 @@ def note(request, course_id, note_id):
             "note": note,
             "course_form": CourseForm(instance=course),
             "note_form": NoteForm(),
+            "note_edit_form": NoteForm(instance=note),
         },
     )
 
@@ -526,28 +527,11 @@ def note_edit(request, course_id, note_id):
             note.title = form.cleaned_data["title"]
             note.content = form.cleaned_data["content"]
             note.save()
-            return HttpResponseRedirect(reverse("note", args=[course.id, note.id]))
+            return JsonResponse(note.serialize(), status=201, safe=False)
         else:
-            return render(
-                request,
-                "assistor/note_edit.html",
-                {
-                    "message": "Failed to edit note!",
-                    "course": course,
-                    "note": note,
-                    "form": NoteForm(instance=note),
-                },
-            )
+            return JsonResponse(form.errors, status=400, safe=False)
 
-    # Show the Note Editing Form
-    elif request.method == "GET":
-        return render(
-            request,
-            "assistor/note_edit.html",
-            {"course": course, "note": note, "form": NoteForm(instance=note)},
-        )
-
-    # Only GET and POST allowed
+    # Only POST allowed
     else:
         return HttpResponseNotAllowed()
 
