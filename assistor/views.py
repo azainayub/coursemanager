@@ -1,4 +1,5 @@
 from django.http.response import HttpResponseNotAllowed, HttpResponseRedirect
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
@@ -16,6 +17,7 @@ from .forms import (
     InstructorForm,
     ReminderForm,
 )
+
 
 # Create your views here.
 @login_required(login_url="login")
@@ -41,6 +43,7 @@ def index(request):
         {
             "courses": request.user.courses.all()[:4],
             "reminders": request.user.reminders.all()[:4],
+            "form": CourseForm(),
         },
     )
 
@@ -168,47 +171,6 @@ def register(request):
 
 
 @login_required(login_url="login")
-def course_new(request):
-    """
-    Display the course form :model:`assistor.Course`.
-
-    **Context**
-
-    ``form``
-        An instance of :form:`assistor.CourseForm`.
-
-    **Template:**
-
-    :template:`assistor/course_new.html`
-    """
-
-    # Add a new course
-    if request.method == "POST":
-
-        # Assign the form data from request
-        course = Course(user=request.user)
-        form = CourseForm(request.POST, instance=course)
-
-        # Validate the form data
-        if form.is_valid():
-
-            # Course added successfully
-            form.save()
-            return HttpResponseRedirect(reverse("course", args=[course.id]))
-
-        else:
-            return render(request, "assistor/course_new.html", {"form": form})
-
-    # Show the form for adding course
-    elif request.method == "GET":
-        return render(request, "assistor/course_new.html", {"form": CourseForm()})
-
-    # Only GET and POST allowed
-    else:
-        return HttpResponseNotAllowed()
-
-
-@login_required(login_url="login")
 def courses(request):
     """
     Display all courses of user
@@ -261,53 +223,6 @@ def course(request, course_id):
 
 
 @login_required(login_url="login")
-def course_edit(request, course_id):
-    """
-    Display the course edit form :model:`assistor.Course`.
-
-    **Context**
-
-    ``form``
-        An instance of :form:`assistor.CourseForm`.
-
-    **Template:**
-
-    :template:`assistor/course_edit.html`
-    """
-    course = get_object_or_404(Course, id=course_id, user=request.user)
-
-    # Edit a course
-    if request.method == "POST":
-
-        form = CourseForm(request.POST, instance=course)
-
-        # Validate the form data
-        if form.is_valid():
-            course.title = form.cleaned_data["title"]
-            course.start_date = form.cleaned_data["start_date"]
-            course.completion_date = form.cleaned_data["completion_date"]
-            course.grade = form.cleaned_data["grade"]
-            course.provider = form.cleaned_data["provider"]
-
-            # Save the edited course
-            course.save()
-            return HttpResponseRedirect(reverse("course", args=[course.id]))
-        else:
-            return render(
-                request, "assistor/course_edit.html", {"course": course, "form": form}
-            )
-
-    # Show the course edit form
-    else:
-        # Show the form for editing course
-        return render(
-            request,
-            "assistor/course_edit.html",
-            {"course": course, "form": CourseForm(instance=course)},
-        )
-
-
-@login_required(login_url="login")
 def notes(request, course_id):
     """
     Display the notes :model:`assistor.Note`.
@@ -355,6 +270,186 @@ def note(request, course_id, note_id):
 
 
 @login_required(login_url="login")
+def files(request, course_id):
+    """
+    Display the files :model:`assistor.File`.
+
+    **Context**
+
+    ``course``
+        An instance of :model:`assistor.Course`.
+
+    ``files``
+        An instance of :model:`assistor.File`.
+
+    **Template:**
+
+    :template:`assistor/files.html`
+    """
+    course = get_object_or_404(Course, id=course_id, user=request.user)
+    return render(
+        request,
+        "assistor/files.html",
+        {"course": course, "files": File.objects.filter(course=course)},
+    )
+
+
+@login_required(login_url="login")
+def file(request, course_id, file_id):
+    """
+    Display a file :model:`assistor.File`.
+
+    **Context**
+
+    ``course``
+        An instance of :model:`assistor.Course`.
+
+    ``files``
+        An instance of :model:`assistor.File`.
+
+    **Template:**
+
+    :template:`assistor/files.html`
+    """
+    course = get_object_or_404(Course, id=course_id, user=request.user)
+    file = get_object_or_404(File, id=file_id, course=course)
+
+    return render(request, "assistor/file.html", {"course": course, "file": file})
+
+
+@login_required(login_url="login")
+def reminder(request, reminder_id):
+    """
+    Display the reminder :model:`assistor.Reminder`.
+
+    **Context**
+
+    ``reminder``
+        An instance of :model:`assistor.Reminder`.
+
+    **Template:**
+
+    :template:`assistor/reminder.html`
+    """
+    reminder = get_object_or_404(Reminder, id=reminder_id, user=request.user)
+    return render(request, "assistor/reminder.html", {"reminder": reminder})
+
+
+@login_required(login_url="login")
+def reminders(request):
+    """
+    Display the reminders :model:`assistor.Reminder`.
+
+    **Context**
+
+    ``courses``
+        An instance of :Objects:`assistor.Course`.
+
+    **Template:**
+
+    :template:`assistor/reminders.html`
+    """
+    return render(
+        request, "assistor/reminders.html", {"reminders": request.user.reminders.all()}
+    )
+
+
+@login_required(login_url="login")
+def course_new(request):
+    """
+    Display the course form :model:`assistor.Course`.
+
+    **Context**
+
+    ``form``
+        An instance of :form:`assistor.CourseForm`.
+
+    """
+
+    # Add a new course
+    if request.method == "POST":
+
+        # Assign the form data from request
+        course = Course(user=request.user)
+        form = CourseForm(request.POST, instance=course)
+
+        # Validate the form data
+        if form.is_valid():
+
+            # Course added successfully
+            form.save()
+            return JsonResponse(course.serialize(), status=201, safe=False)
+
+        # Data is invalid
+        else:
+            return JsonResponse(form.errors, status=400, safe=False)
+
+    # Only POST allowed
+    else:
+        return HttpResponseNotAllowed()
+
+
+@login_required(login_url="login")
+def course_edit(request, course_id):
+    """
+    Display the course edit form :model:`assistor.Course`.
+
+    **Context**
+
+    ``form``
+        An instance of :form:`assistor.CourseForm`.
+
+    **Template:**
+
+    :template:`assistor/course_edit.html`
+    """
+    course = get_object_or_404(Course, id=course_id, user=request.user)
+
+    # Edit a course
+    if request.method == "POST":
+
+        form = CourseForm(request.POST, instance=course)
+
+        # Validate the form data
+        if form.is_valid():
+            course.title = form.cleaned_data["title"]
+            course.start_date = form.cleaned_data["start_date"]
+            course.completion_date = form.cleaned_data["completion_date"]
+            course.grade = form.cleaned_data["grade"]
+            course.provider = form.cleaned_data["provider"]
+
+            # Save the edited course
+            course.save()
+            return HttpResponseRedirect(reverse("course", args=[course.id]))
+        else:
+            return render(
+                request, "assistor/course_edit.html", {"course": course, "form": form}
+            )
+
+    # Show the course edit form
+    else:
+        # Show the form for editing course
+        return render(
+            request,
+            "assistor/course_edit.html",
+            {"course": course, "form": CourseForm(instance=course)},
+        )
+
+
+@login_required(login_url="login")
+def course_delete(request, course_id):
+    """
+    Delete the course :model:`assistor.Course`.
+    """
+    course = get_object_or_404(Course, id=course_id, user=request.user)
+
+    # Delete the course
+    course.delete()
+
+    return HttpResponseRedirect(reverse("index"))
+
+
+@login_required(login_url="login")
 def note_new(request, course_id):
     """
     Display a new note form :model:`assistor.Note`.
@@ -388,6 +483,10 @@ def note_new(request, course_id):
 
             # Show the note
             return HttpResponseRedirect(reverse("note", args=[course_id, note.id]))
+        else:
+            return render(
+                request, "assistor/note_new.html", {"course": course, "form": form}
+            )
 
     # Show the form for adding new note
     elif request.method == "GET":
@@ -454,64 +553,17 @@ def note_edit(request, course_id, note_id):
 
 
 @login_required(login_url="login")
-def files(request, course_id):
+def note_delete(request, course_id, note_id):
     """
-    Display the files :model:`assistor.File`.
-
-    **Context**
-
-    ``course``
-        An instance of :model:`assistor.Course`.
-
-    ``files``
-        An instance of :model:`assistor.File`.
-
-    **Template:**
-
-    :template:`assistor/files.html`
+    Delete the note :model:`assistor.Note`.
     """
     course = get_object_or_404(Course, id=course_id, user=request.user)
-    return render(
-        request,
-        "assistor/files.html",
-        {"course": course, "files": File.objects.filter(course=course)},
-    )
+    note = get_object_or_404(Note, id=note_id, course=course)
 
+    # Delete the note
+    note.delete()
 
-@login_required(login_url="login")
-def file(request, course_id, file_id):
-    """
-    Display a file :model:`assistor.File`.
-
-    **Context**
-
-    ``course``
-        An instance of :model:`assistor.Course`.
-
-    ``files``
-        An instance of :model:`assistor.File`.
-
-    **Template:**
-
-    :template:`assistor/files.html`
-    """
-    course = get_object_or_404(Course, id=course_id, user=request.user)
-    file = get_object_or_404(File, id=file_id, course=course)
-
-    return render(request, "assistor/file.html", {"course": course, "file": file})
-
-
-@login_required(login_url="login")
-def course_delete(request, course_id):
-    """
-    Delete the course :model:`assistor.Course`.
-    """
-    course = get_object_or_404(Course, id=course_id, user=request.user)
-
-    # Delete the course
-    course.delete()
-
-    return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("course", args=[course_id]))
 
 
 @login_required(login_url="login")
@@ -547,24 +599,6 @@ def reminder_new(request):
     # Only GET and POST allowed
     else:
         return HttpResponseNotAllowed()
-
-
-@login_required(login_url="login")
-def reminder(request, reminder_id):
-    """
-    Display the reminder :model:`assistor.Reminder`.
-
-    **Context**
-
-    ``reminder``
-        An instance of :model:`assistor.Reminder`.
-
-    **Template:**
-
-    :template:`assistor/reminder.html`
-    """
-    reminder = get_object_or_404(Reminder, id=reminder_id, user=request.user)
-    return render(request, "assistor/reminder.html", {"reminder": reminder})
 
 
 @login_required(login_url="login")
@@ -635,21 +669,7 @@ def reminder_delete(request, reminder_id):
 
 
 @login_required(login_url="login")
-def note_delete(request, course_id, note_id):
-    """
-    Delete the note :model:`assistor.Note`.
-    """
-    course = get_object_or_404(Course, id=course_id, user=request.user)
-    note = get_object_or_404(Note, id=note_id, course=course)
-
-    # Delete the note
-    note.delete()
-
-    return HttpResponseRedirect(reverse("course", args=[course_id]))
-
-
-@login_required(login_url="login")
-def new_file(request, course_id):
+def file_new(request, course_id):
     """
     Display the file form :model:`assistor.File`.
 
@@ -759,6 +779,20 @@ def file_edit(request, course_id, file_id):
 
 
 @login_required(login_url="login")
+def file_delete(request, course_id, file_id):
+    """
+    Delete the file :model:`assistor.File`.
+    """
+    course = get_object_or_404(Course, id=course_id, user=request.user)
+    file = get_object_or_404(File, id=file_id, course=course)
+
+    # Delete the file
+    file.delete()
+
+    return HttpResponseRedirect(reverse("course", args=[course_id]))
+
+
+@login_required(login_url="login")
 def link_new(request, course_id):
     """
     Display the new link form :model:`assistor.Link`.
@@ -858,36 +892,3 @@ def instructor_new(request, course_id):
     # Only GET and POST allowed
     else:
         return HttpResponseNotAllowed()
-
-
-@login_required(login_url="login")
-def reminders(request):
-    """
-    Display the reminders :model:`assistor.Reminder`.
-
-    **Context**
-
-    ``courses``
-        An instance of :Objects:`assistor.Course`.
-
-    **Template:**
-
-    :template:`assistor/reminders.html`
-    """
-    return render(
-        request, "assistor/reminders.html", {"reminders": request.user.reminders.all()}
-    )
-
-
-@login_required(login_url="login")
-def file_delete(request, course_id, file_id):
-    """
-    Delete the file :model:`assistor.File`.
-    """
-    course = get_object_or_404(Course, id=course_id, user=request.user)
-    file = get_object_or_404(File, id=file_id, course=course)
-
-    # Delete the file
-    file.delete()
-
-    return HttpResponseRedirect(reverse("course", args=[course_id]))
