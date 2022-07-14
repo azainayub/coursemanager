@@ -1,0 +1,48 @@
+<div class="modal fade" id="newInstructorModal" tabindex="-1" aria-labelledby="newInstructorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="newInstructorModalLabel">
+            <span class="material-icons-outlined fs-2">
+                people
+            </span>
+            New Instructor
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form name="newInstructorForm">
+                
+                {% csrf_token %}
+
+                <div id="errors" class="mb-3">
+                    {{ form.errors }}
+                </div>
+        
+                <div class="mb-3">
+                    <label for="{{ form.title.id_for_label }}" class="col-form-label">{{ form.title.label }}:</label>
+                    {{ form.title }}
+                </div>
+        
+                <div class="mb-3">
+                    <label for="{{ form.first_name.id_for_label }}" class="col-form-label">{{ form.first_name.label }}:</label>
+                    {{ form.first_name }}
+                </div>
+        
+                <div class="mb-3">
+                    <label for="{{ form.last_name.id_for_label }}" class="col-form-label">{{ form.last_name.label }}:</label>
+                    {{ form.last_name }}
+                </div>
+        
+                <div class="mb-3">
+                    <label for="{{ form.email.id_for_label }}" class="col-form-label">{{ form.email.label }}:</label>
+                    {{ form.email }}
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button id="addInstructorButton" name="submit" type="submit" form="newInstructorForm" class="btn btn-primary">Add</button>
+        </div>
+      </div>
+    </div>
+</div>

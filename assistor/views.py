@@ -225,6 +225,7 @@ def course(request, course_id):
             "links": Link.objects.filter(course=course),
             "note_form": NoteForm(),
             "file_form": FileForm(),
+            "instructor_form": InstructorForm(),
         },
     )
 
@@ -818,22 +819,7 @@ def link_new(request, course_id):
 @login_required(login_url="login")
 def instructor_new(request, course_id):
     """
-    Display the new instrcutor form :model:`assistor.Instructor`.
-
-    **Context**
-
-    ``course``
-        An instance of :model:`assistor.course`.
-
-    ``instructor``
-        An instance of :form:`assistor.Instructor`.
-
-    ``form``
-        An instance of :form:`assistor.InstructorForm`.
-
-    **Template:**
-
-    :template:`assistor/instructor_new.html`
+    Add new Instructor
     """
 
     course = get_object_or_404(Course, id=course_id, user=request.user)
@@ -846,23 +832,11 @@ def instructor_new(request, course_id):
         # Check form is valid
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse("course", args=[course.id]))
+            return JsonResponse(instructor.serialize(), status=201 ,safe=False)
 
         else:
-            return render(
-                request,
-                "assistor/instructor_new.html",
-                {"course": course, "form": form},
-            )
+            return JsonResponse(instructor.serialize(), status=400 ,safe=False)
 
-    # Show the New Instructor Form
-    elif request.method == "GET":
-        return render(
-            request,
-            "assistor/instructor_new.html",
-            {"course": course, "form": InstructorForm()},
-        )
-
-    # Only GET and POST allowed
+    # Only POST allowed
     else:
         return HttpResponseNotAllowed()

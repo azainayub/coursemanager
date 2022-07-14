@@ -97,7 +97,11 @@
             </h2>
             </div>
             <div>
-                <a href="{% url 'instructor_new' course.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
+                <button type="button" class="btn btn-link text-black" data-bs-toggle="modal" data-bs-target="#newInstructorModal">
+                    <span class="material-icons-outlined fs-2">add</span>
+                </button>
+                {% include 'assistor/modals/instructor_new_modal.html' with form=instructor_form %}
+                <script src="{% static 'assistor/js/instructor.js' %}"></script>
             </div>
         </div>
 
