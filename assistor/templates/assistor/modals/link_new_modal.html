@@ -1,0 +1,38 @@
+<div class="modal fade" id="newLinkModal" tabindex="-1" aria-labelledby="newLinkModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="newLinkModalLabel">
+            <span class="material-icons-outlined fs-2">
+                link
+            </span>
+            New Link
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form name="newLinkForm">
+          
+                {% csrf_token %}
+
+                <div id="errors" class="mb-3">
+                    {{ form.errors }}
+                </div>
+        
+                <div class="mb-3">
+                    <label for="{{ form.name.id_for_label }}" class="col-form-label">{{ form.name.label }}:</label>
+                    {{ form.name }}
+                </div>
+        
+                <div class="mb-3">
+                    <label for="{{ form.url.id_for_label }}" class="col-form-label">{{ form.url.label }}:</label>
+                    {{ form.url }}
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button id="addLinkButton" name="submit" type="submit" form="newLinkForm" class="btn btn-primary">Add</button>
+        </div>
+      </div>
+    </div>
+</div>

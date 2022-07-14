@@ -132,11 +132,15 @@
             </h2>
             </div>
             <div>
-                <a href="{% url 'link_new' course.id %}"><button type="button" class="btn btn-link text-black"><span class="material-icons-outlined fs-2">add</span></button></a>
+                <button type="button" class="btn btn-link text-black" data-bs-toggle="modal" data-bs-target="#newLinkModal">
+                    <span class="material-icons-outlined fs-2">add</span>
+                </button>
+                {% include 'assistor/modals/link_new_modal.html' with form=link_form %}
+                <script src="{% static 'assistor/js/link.js' %}"></script>
             </div>
         </div>
 
-        <!-- list of instructors -->
+        <!-- list of links -->
         <div class="row">
             {% for link in links %}
             <div class="col-sm-12 mb-3">
