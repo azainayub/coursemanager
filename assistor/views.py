@@ -224,6 +224,7 @@ def course(request, course_id):
             "files": File.objects.filter(course=course)[:4],
             "instructors": Instructor.objects.filter(course=course),
             "links": Link.objects.filter(course=course),
+            "course_form": CourseForm(instance=course),
             "note_form": NoteForm(),
             "file_form": FileForm(),
             "instructor_form": InstructorForm(),
@@ -256,6 +257,7 @@ def notes(request, course_id):
         {
             "course": course,
             "notes": course.notes.all(),
+            "course_form": CourseForm(instance=course),
             "note_form": NoteForm(),
         },
     )
@@ -288,6 +290,7 @@ def note(request, course_id, note_id):
         {
             "course": course,
             "note": note,
+            "course_form": CourseForm(instance=course),
             "note_form": NoteForm(),
         },
     )
@@ -317,6 +320,7 @@ def files(request, course_id):
         {
             "course": course,
             "files": File.objects.filter(course=course),
+            "course_form": CourseForm(instance=course),
             "file_form": FileForm(),
         },
     )
@@ -342,7 +346,7 @@ def file(request, course_id, file_id):
     course = get_object_or_404(Course, id=course_id, user=request.user)
     file = get_object_or_404(File, id=file_id, course=course)
 
-    return render(request, "assistor/file.html", {"course": course, "file": file, "file_form": FileForm(),})
+    return render(request, "assistor/file.html", {"course": course, "file": file, "file_form": FileForm(), "course_form": CourseForm(instance=course),})
 
 
 @login_required(login_url="login")
@@ -443,20 +447,13 @@ def course_edit(request, course_id):
 
             # Save the edited course
             course.save()
-            return HttpResponseRedirect(reverse("course", args=[course.id]))
+            return JsonResponse(course.serialize(), status=201, safe=False)
         else:
-            return render(
-                request, "assistor/course_edit.html", {"course": course, "form": form}
-            )
-
-    # Show the course edit form
+            return JsonResponse(form.errors, status=400, safe=False)
+    
+    # Only POST allowed
     else:
-        # Show the form for editing course
-        return render(
-            request,
-            "assistor/course_edit.html",
-            {"course": course, "form": CourseForm(instance=course)},
-        )
+        return HttpResponseNotAllowed()
 
 
 @login_required(login_url="login")
